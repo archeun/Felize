@@ -1,0 +1,9 @@
+{% if organizations %}
+    <ul>
+        {% for organization in organizations %}
+            <li><a href="/pm/organizations/{{ organization.id }}/">{{ organization.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No Organizations are available.</p>
+{% endif %}
