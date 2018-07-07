@@ -42,9 +42,14 @@ class Project(models.Model):
     code = models.CharField(max_length=5, blank=False, unique=True)
     name = models.CharField(max_length=255, blank=False)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    project_manager = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='ProjectManager')
+    project_managers = models.ManyToManyField(
+        Employee,
+        related_name='project_manager',
+        through='ProjectManager',
+    )
     resources = models.ManyToManyField(
         Employee,
+        related_name='project_resource',
         through='ProjectResource',
     )
 
@@ -52,10 +57,18 @@ class Project(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return "<" + self.client.name + "> " + self.code + " : " + self.name + " [ MANAGER: " + self.project_manager.first_name + " " + self.project_manager.last_name + "]"
+        return "<" + self.client.name + "> " + self.code + " : " + self.name
 
 
 class ProjectResource(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.employee.first_name + " : {" + self.project.__str__() + "}"
+
+
+class ProjectManager(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 

@@ -100,6 +100,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/pm'
+LOGOUT_REDIRECT_URL = LOGIN_URL
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
