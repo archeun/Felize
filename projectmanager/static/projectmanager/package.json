@@ -1,0 +1,15 @@
+{
+  "name": "archeun_felize",
+  "version": "1.0.0",
+  "description": "Felize - A Project Management Application",
+  "main": "index.js",
+  "dependencies": {
+    "semantic-ui": "^2.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -2,3 +2,5 @@ db.sqlite3
 .idea/
 Felize/__pycache__/*
 *.pyc
+projectmanager/static/projectmanager/node_modules/
+projectmanager/static/projectmanager/semantic/dist
