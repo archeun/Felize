@@ -1,11 +1,13 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
+from django.views.generic.edit import ModelFormMixin
+
 from projectmanager.model_filters import ProjectFilter
-from projectmanager.models import Project
+from projectmanager.models import Project, ProjectManager, ProjectResource
 from django.views import generic
 
 from projectmanager.services.list_service import get_project_list_config
-from projectmanager.services.project_service import get_projects_for_user
+import projectmanager.services.project_service as project_service
 
 
 class ProjectListView(generic.ListView):
@@ -15,14 +17,16 @@ class ProjectListView(generic.ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
-        project_filter = ProjectFilter(self.request.GET, queryset=get_projects_for_user(self.request.user))
+        project_filter = ProjectFilter(self.request.GET,
+                                       queryset=project_service.get_projects_for_user(self.request.user))
         url_params = self.request.GET.copy()
         if url_params.get('page'):
             del url_params['page']
         context['project_list_config'] = get_project_list_config({
             'name': 'Projects List',
             'is_paginated': True,
-            'url_encoded_filters': url_params.urlencode()
+            'url_encoded_filters': url_params.urlencode(),
+            'add_object': {"url": reverse("projectmanager:create_project"), "button_tooltip":"Add Project"}
         })
         filtered_project_list = project_filter.qs
 
@@ -44,10 +48,30 @@ class ProjectListView(generic.ListView):
         return context
 
     def get_queryset(self):
-        project_filter = ProjectFilter(self.request.GET, queryset=get_projects_for_user(self.request.user))
+        project_filter = ProjectFilter(self.request.GET,
+                                       queryset=project_service.get_projects_for_user(self.request.user))
         return project_filter.qs
 
 
-class ProjectDetailView(generic.DetailView):
+class ProjectUpdateView(generic.UpdateView):
     model = Project
-    template_name = 'projectmanager/project/detail.html'
+    fields = '__all__'
+    template_name = 'projectmanager/project/create.html'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        project_service.save(self.object, update=True, project_managers=form.cleaned_data['project_managers'],
+                             project_resources=form.cleaned_data['resources'])
+        return super(ModelFormMixin, self).form_valid(form)
+
+
+class ProjectCreateView(generic.CreateView):
+    model = Project
+    fields = '__all__'
+    template_name = 'projectmanager/project/create.html'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        project_service.save(self.object, update=False, project_managers=form.cleaned_data['project_managers'],
+                             project_resources=form.cleaned_data['resources'])
+        return super(ModelFormMixin, self).form_valid(form)

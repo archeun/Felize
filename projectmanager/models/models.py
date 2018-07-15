@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 class Organization(models.Model):
@@ -46,11 +47,13 @@ class Project(models.Model):
         Employee,
         related_name='project_manager',
         through='ProjectManager',
+        blank=True
     )
     resources = models.ManyToManyField(
         Employee,
         related_name='project_resource',
         through='ProjectResource',
+        blank=True
     )
 
     class Meta:
@@ -58,6 +61,9 @@ class Project(models.Model):
 
     def __str__(self):
         return "<" + self.client.name + "> " + self.code + " : " + self.name
+
+    def get_absolute_url(self):
+        return reverse("projectmanager:update_project", args=[self.id])
 
 
 class ProjectResource(models.Model):

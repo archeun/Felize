@@ -1,5 +1,10 @@
 <div class="ui raised segment">
-    <h3>{{ list_config.params.name }}</h3>
+    <div class="ui two column grid">
+        <h3 class="fifteen wide column">{{ list_config.params.name }}</h3>
+        <a data-tooltip="{{ list_config.params.add_object.button_tooltip }}" data-inverted="" class="big button one wide column right aligned" href="{{ list_config.params.add_object.url }}">
+            <i class="big add icon"></i>
+        </a>
+    </div>
     <table class="ui celled table">
         <thead>
         <tr>
