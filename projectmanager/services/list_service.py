@@ -10,6 +10,14 @@ def get_project_list_config(params):
                 'name': 'Project Code',
                 'value_getter_type': VALUE_GETTER_TYPE_ATTR_SINGLE,
                 'value_getter': 'code',
+                'config': {
+                    'url': {
+                        'view_name': 'projectmanager:update_project',
+                        'params': [
+                            {'name': 'pk', 'getter': 'id'}
+                        ]
+                    }
+                }
             },
             {
                 'name': 'Name',
@@ -23,3 +31,8 @@ def get_project_list_config(params):
             }
         ]
     }
+# wickann92
+# Wicky_1
+
+
+# anudiesoftv2v12ANU

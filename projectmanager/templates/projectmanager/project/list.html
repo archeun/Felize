@@ -2,37 +2,43 @@
 {% load list_component %}
 
 {% block content %}
-    <div class="ui styled fluid accordion">
-        <div class="title">
-            <i class="filter icon right aligned"></i> Filter
-        </div>
-        <div class="content">
-            <div class="transition">
-                <form method="get">
-                    <div class="ui form">
-                        <div class="fields">
-                            <div class="four wide field">
-                                {{ project_filter.form.code.errors }}
-                                <label for="{{ project_filter.form.code.id_for_label }}">Code</label>
-                                {{ project_filter.form.code }}
-                            </div>
-                            <div class="six wide field">
-                                {{ project_filter.form.name.errors }}
-                                <label for="{{ project_filter.form.name.id_for_label }}">Name</label>
-                                {{ project_filter.form.name }}
-                            </div>
-                            <div class="six wide field">
-                                {{ project_filter.form.client.errors }}
-                                <label for="{{ project_filter.form.coclientde.id_for_label }}">Client</label>
-                                {{ project_filter.form.client }}
-                            </div>
+    <div class="ui mini teal">
+        <div class="ui accordion">
+            <div class="title active">
+                <i class="filter icon right aligned"></i> Filter Projects
+            </div>
+            <div class="content">
+                <div class="transition">
+                    <div class="ui inverted segment">
+                        <div class="ui inverted form">
+                            <form method="get">
+                                <div class="ui form">
+                                    <div class="fields">
+                                        <div class="four wide field">
+                                            {{ project_filter.form.code.errors }}
+                                            <label for="{{ project_filter.form.code.id_for_label }}">Code</label>
+                                            {{ project_filter.form.code }}
+                                        </div>
+                                        <div class="six wide field">
+                                            {{ project_filter.form.name.errors }}
+                                            <label for="{{ project_filter.form.name.id_for_label }}">Name</label>
+                                            {{ project_filter.form.name }}
+                                        </div>
+                                        <div class="six wide field">
+                                            {{ project_filter.form.client.errors }}
+                                            <label for="{{ project_filter.form.coclientde.id_for_label }}">Client</label>
+                                            {{ project_filter.form.client }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <button class="ui button primary" type="submit">Search</button>
+                                <input class="ui button" type="button" value="Reset"
+                                       onclick="window.location='{{ project_filter_reset_url }}'">
+                            </form>
                         </div>
                     </div>
-                    <br/>
-                    <button class="ui button primary" type="submit">Search</button>
-                    <input class="ui button" type="button" value="Reset"
-                           onclick="window.location='{{ project_filter_reset_url }}'">
-                </form>
+                </div>
             </div>
         </div>
     </div>

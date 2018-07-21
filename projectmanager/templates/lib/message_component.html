@@ -1,0 +1,11 @@
+{% if messages %}
+    {% for m in messages %}
+        <div class="ui teal floating message">
+            <i class="close icon"></i>
+            <div class="header">
+                {{ header }}
+            </div>
+            <p>{{ m }}</p>
+        </div>
+    {% endfor %}
+{% endif %}

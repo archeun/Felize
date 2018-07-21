@@ -1,57 +1,68 @@
 {% extends "../layout/felize_app.html" %}
+{% load message_component %}
 
 {% block content %}
-    <div class="ui teal inverted raised segment">
+
+    {% render_message messages %}
+
+    <div class="ui teal mini raised segment">
         <h4 class="ui center aligned header">
             <i class="building outline icon"></i>
             Project Information
         </h4>
     </div>
-    <form method="post">
-        {% csrf_token %}
-        <div class="ui form">
-            <div class="fields ui two column grid">
-                <div class="four wide field">
-                    {{ form.code.errors }}
-                    <label for="{{ form.code.id_for_label }}">Code</label>
-                    {{ form.code }}
+    <div class="ui inverted segment">
+        <div class="ui inverted form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="ui form">
+                    <div class="fields ui two column grid">
+                        <div class="four wide field">
+                            {{ form.code.errors }}
+                            <label for="{{ form.code.id_for_label }}">Code</label>
+                            {{ form.code }}
+                        </div>
+                        <div class="six wide field">
+                            {{ form.name.errors }}
+                            <label for="{{ form.name.id_for_label }}">Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="six wide field">
+                            {{ form.client.errors }}
+                            <label for="{{ form.client.id_for_label }}">Client</label>
+                            {{ form.client }}
+                        </div>
+                    </div>
+                    <h4 class="ui horizontal divider header teal">
+                        <i class="users icon"></i>Management Details
+                    </h4>
+                    <div class="fields ui two column grid">
+                        <div class="eight wide field">
+                            {{ form.project_managers.errors }}
+                            <label for="{{ form.project_managers.id_for_label }}">Project Managers</label>
+                            {{ form.project_managers }}
+                        </div>
+                        <div class="eight wide field">
+                            {{ form.resources.errors }}
+                            <label for="{{ form.resources.id_for_label }}">Resources</label>
+                            {{ form.resources }}
+                        </div>
+                    </div>
                 </div>
-                <div class="six wide field">
-                    {{ form.name.errors }}
-                    <label for="{{ form.name.id_for_label }}">Name</label>
-                    {{ form.name }}
+                <div class="ui horizontal divider"></div>
+                <div class=" ui sixteen column inverted white segment">
+                    <div class="ui buttons">
+                        <button class="ui button" onclick="window.location='{% url 'projectmanager:project_list' %}'"
+                                type="button">
+                            Cancel
+                        </button>
+                        <div class="or"></div>
+                        <button class="ui teal button">Save</button>
+                    </div>
                 </div>
-                <div class="six wide field">
-                    {{ form.client.errors }}
-                    <label for="{{ form.client.id_for_label }}">Client</label>
-                    {{ form.client }}
-                </div>
-            </div>
-            <h4 class="ui horizontal divider header teal">
-                <i class="users icon"></i>Management Details
-            </h4>
-            <div class="fields ui two column grid">
-                <div class="eight wide field">
-                    {{ form.project_managers.errors }}
-                    <label for="{{ form.project_managers.id_for_label }}">Project Managers</label>
-                    {{ form.project_managers }}
-                </div>
-                <div class="eight wide field">
-                    {{ form.resources.errors }}
-                    <label for="{{ form.resources.id_for_label }}">Resources</label>
-                    {{ form.resources }}
-                </div>
-            </div>
-        </div>
-        <div class="ui horizontal divider"></div>
-        <div class="sixteen column right aligned">
-            <div class="ui buttons">
-                <button class="ui button">Cancel</button>
-                <div class="or"></div>
-                <button class="ui teal button">Save</button>
-            </div>
-        </div>
 
-    </form>
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
