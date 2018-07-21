@@ -66,12 +66,29 @@ class Project(models.Model):
         return reverse("projectmanager:update_project", args=[self.id])
 
 
+class ProjectResourceType(models.Model):
+    name = models.CharField(max_length=255, blank=False)
+
+    class Meta:
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+
 class ProjectResource(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    resource_type = models.ForeignKey(ProjectResourceType, on_delete=models.SET_NULL, null=True)
+    allocation_start_date = models.DateField(null=True, blank=True)
+    allocation_end_date = models.DateField(null=True, blank=True)
+    work_hours_per_day = models.DecimalField(null=True, max_digits=4, decimal_places=2, blank=True)
 
     def __str__(self):
-        return self.employee.first_name + " : {" + self.project.__str__() + "}"
+        if self.resource_type:
+            return self.employee.first_name + " : {" + self.project.__str__() + ": [" + self.resource_type.name + "]}"
+        else:
+            return self.employee.first_name + " : {" + self.project.__str__() + "}"
 
 
 class ProjectManager(models.Model):

@@ -59,7 +59,6 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
     model = Project
     fields = '__all__'
     template_name = 'projectmanager/project/create.html'
-    success_message = 'List successfully saved!!!!'
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -74,7 +73,6 @@ class ProjectCreateView(SuccessMessageMixin, generic.CreateView):
     model = Project
     fields = '__all__'
     template_name = 'projectmanager/project/create.html'
-    success_message = 'List successfully saved!!!!'
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

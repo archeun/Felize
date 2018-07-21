@@ -1,11 +1,13 @@
 from django.contrib import admin
 
-from .models import Organization, Employee, Client, Project, ProjectResource, ProjectManager, UserStory, TaskStatus, Task, WorkEntry
+from .models import Organization, Employee, Client, Project, ProjectResource, ProjectManager, UserStory, TaskStatus, \
+    Task, WorkEntry, ProjectResourceType
 
 admin.site.register(Organization)
 admin.site.register(Employee)
 admin.site.register(Client)
 admin.site.register(Project)
+admin.site.register(ProjectResourceType)
 admin.site.register(ProjectResource)
 admin.site.register(ProjectManager)
 admin.site.register(UserStory)
