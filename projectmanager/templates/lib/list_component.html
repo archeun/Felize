@@ -16,72 +16,70 @@
         </h3>
     </div>
 </div>
-<div class="ui raised segment teal inverted">
 
-    <table class="ui black celled small compact inverted striped table">
-        <thead>
-        <tr>
-            {% for col in list_config.cols %}
-                <th>{{ col.name }}</th>
-            {% endfor %}
+<table class="ui teal celled small compact striped table">
+    <thead>
+    <tr>
+        {% for col in list_config.cols %}
+            <th>{{ col.name }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% if list_items|length > 0 %}
+        {% for list_item_values in list_items %}
+            <tr>
+                {% for list_item_value in list_item_values %}
+                    {% if 'url' in  list_item_value.config %}
+                        <td class="selectable"><a
+                                href="{{ list_item_value.config.url }}">{{ list_item_value.value }}</a></td>
+                    {% else %}
+                        <td>{{ list_item_value.value }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr class="center aligned">
+            <td colspan="{{ list_config.cols|length }}">No records found.</td>
         </tr>
-        </thead>
-        <tbody>
-        {% if list_items|length > 0 %}
-            {% for list_item_values in list_items %}
-                <tr>
-                    {% for list_item_value in list_item_values %}
-                        {% if 'url' in  list_item_value.config %}
-                            <td class="selectable"><a
-                                    href="{{ list_item_value.config.url }}">{{ list_item_value.value }}</a></td>
-                        {% else %}
-                            <td>{{ list_item_value.value }}</td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        {% else %}
-            <tr class="center aligned">
-                <td colspan="{{ list_config.cols|length }}">No records found.</td>
-            </tr>
-        {% endif %}
-        </tbody>
-        {% if list_items|length > 0 %}
-            <tfoot>
-            <tr>
-                <th colspan="3">
-                    <div class="ui right floated mini pagination menu">
-                        {% if page_obj.has_previous %}
-                            <a href="?{{ list_config.params.url_encoded_filters }}&page={{ page_obj.previous_page_number }}"
-                               class="icon item">
-                                <i class="left chevron icon"></i>
-                            </a>
-                        {% endif %}
-                        {% with ''|center:page_obj.paginator.num_pages as range %}
-                            {% for _ in range %}
-                                <a class="item"
-                                   href="?{{ list_config.params.url_encoded_filters }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                            {% endfor %}
-                        {% endwith %}
-                        {% if page_obj.has_next %}
-                            <a href="?{{ list_config.params.url_encoded_filters }}&page={{ page_obj.next_page_number }}"
-                               class="icon item">
-                                <i class="right chevron icon"></i>
-                            </a>
-                        {% endif %}
-                    </div>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="3">
-                    <div class="ui right aligned">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                        [ {{ page_obj.paginator.count }}
-                        records found].
-                    </div>
-                </th>
-            </tr>
-            </tfoot>
-        {% endif %}
-    </table>
-</div>
+    {% endif %}
+    </tbody>
+    {% if list_items|length > 0 %}
+        <tfoot>
+        <tr>
+            <th colspan="3">
+                <div class="ui right floated mini pagination menu">
+                    {% if page_obj.has_previous %}
+                        <a href="?{{ list_config.params.url_encoded_filters }}&page={{ page_obj.previous_page_number }}"
+                           class="icon item">
+                            <i class="left chevron icon"></i>
+                        </a>
+                    {% endif %}
+                    {% with ''|center:page_obj.paginator.num_pages as range %}
+                        {% for _ in range %}
+                            <a class="item"
+                               href="?{{ list_config.params.url_encoded_filters }}&page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                        {% endfor %}
+                    {% endwith %}
+                    {% if page_obj.has_next %}
+                        <a href="?{{ list_config.params.url_encoded_filters }}&page={{ page_obj.next_page_number }}"
+                           class="icon item">
+                            <i class="right chevron icon"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th colspan="3">
+                <div class="ui right aligned">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    [ {{ page_obj.paginator.count }}
+                    records found].
+                </div>
+            </th>
+        </tr>
+        </tfoot>
+    {% endif %}
+</table>

@@ -5,14 +5,38 @@
 
     {% render_message messages %}
 
-    <div class="ui teal mini raised segment">
-        <h4 class="ui center aligned header">
-            <i class="building outline icon"></i>
-            Project Information
-        </h4>
+    <div class="ui small teal raised center aligned segment">
+        <div class="ui grid">
+            <div class="fifteen wide column center aligned">
+                <div class="ui header">
+                    <i class="building outline icon"></i>
+                    Project Information
+                </div>
+            </div>
+            <div class="one wide column right aligned">
+                <div class="ui inline dropdown">
+                    <i class="ellipsis vertical icon"></i>
+                    <div class="menu">
+                        <div class="item"><a href="{% url 'projectmanager:project_list' %}">User Stories</a></div>
+                        {% if project_resource_task_breakdown_url %}
+                            <div class="item">
+                                <a href="{{ project_resource_task_breakdown_url }}">
+                                    Work Break Down
+                                </a>
+                            </div>
+                        {% endif %}
+                        <div class="ui divider"></div>
+                        <div class="header">Reports</div>
+                        <div class="item"><a href="{% url 'projectmanager:project_list' %}">Resource Work Hours</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <div class="ui inverted segment">
-        <div class="ui inverted form">
+    <div class="ui segment">
+        <div class="ui form">
             <form method="post">
                 {% csrf_token %}
                 <div class="ui form">
@@ -50,7 +74,7 @@
                     </div>
                 </div>
                 <div class="ui horizontal divider"></div>
-                <div class=" ui sixteen column inverted white segment">
+                <div class=" ui sixteen column teal white segment">
                     <div class="ui buttons">
                         <button class="ui button" onclick="window.location='{% url 'projectmanager:project_list' %}'"
                                 type="button">

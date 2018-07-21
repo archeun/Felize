@@ -1,0 +1,119 @@
+{% extends "../layout/felize_app.html" %}
+{% block content %}
+    <div class="ui two column grid raised segment teal">
+        <div class="sixteen wide column inverted">
+            <h4>
+                <i class="list icon"></i>
+                <span>Task Breakdown for {{ project_name }} by {{ employee_name }}</span>
+            </h4>
+        </div>
+    </div>
+    <div class="ui segment">
+        <div class="ui form">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="fields ui grid">
+                    <div class="five wide column field">
+                        {{ form.employee.errors }}
+                        <label for="{{ form.employee.id_for_label }}">Employee</label>
+                        {{ form.employee }}
+                    </div>
+                    <div class="five wide column field">
+                        {{ form.project.errors }}
+                        <label for="{{ form.project.id_for_label }}">Project</label>
+                        {{ form.project }}
+                    </div>
+                </div>
+                <div class="fields ui grid">
+                    <div class="five wide column field">
+                        {{ form.allocation_start_date.errors }}
+                        <label for="{{ form.allocation_start_date.id_for_label }}">Allocation Starts</label>
+                        <div class="ui calendar datepicker">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                {{ form.allocation_start_date }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="five wide column field">
+                        {{ form.allocation_end_date.errors }}
+                        <label for="{{ form.allocation_end_date.id_for_label }}">Allocation Ends</label>
+                        <div class="ui calendar datepicker">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                {{ form.allocation_end_date }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="three wide column field">
+                        {{ form.resource_type.errors }}
+                        <label for="{{ form.resource_type.id_for_label }}">Resource Type</label>
+                        {{ form.resource_type }}
+                    </div>
+                    <div class="three wide column field">
+                        {{ form.work_hours_per_day.errors }}
+                        <label for="{{ form.work_hours_per_day.id_for_label }}">Hours per Day</label>
+                        {{ form.work_hours_per_day }}
+                    </div>
+                </div>
+                <h4 class="ui horizontal divider header teal">
+                    <i class="users icon"></i>Task Breakdown
+                </h4>
+                <table class="ui teal small compact striped table">
+                    {{ project_resource_tasks.management_form }}
+
+                    {% for form in project_resource_tasks.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th>{{ field.label|capfirst }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    {{ field }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="ui container right aligned">
+                    <button class="ui teal button">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        $('.formset_row').formset({
+            addText: '<i class="plus square icon"></i>Add Task',
+            deleteText: '<i class="trash alternate icon"></i>',
+            prefix: 'task_set',
+            added: function (row) {
+                $(row).find("textarea").height(20);
+            }
+        });
+
+        let body = $("body");
+
+        body.find("textarea").height(20);
+        body.on('focus', 'textarea', function () {
+            $(this).height(100);
+        });
+
+        body.on('blur', 'textarea', function () {
+            $(this).height(20);
+        });
+
+    </script>
+{% endblock %}

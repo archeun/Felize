@@ -20,7 +20,7 @@ class ProjectListView(generic.ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
         project_filter = ProjectFilter(self.request.GET,
-                                       queryset=project_service.get_projects_for_user(self.request.user))
+                                       queryset=project_service.get_projects_for_user(self.request.user.id))
         url_params = self.request.GET.copy()
         if url_params.get('page'):
             del url_params['page']
@@ -51,7 +51,7 @@ class ProjectListView(generic.ListView):
 
     def get_queryset(self):
         project_filter = ProjectFilter(self.request.GET,
-                                       queryset=project_service.get_projects_for_user(self.request.user))
+                                       queryset=project_service.get_projects_for_user(self.request.user.id))
         return project_filter.qs
 
 
@@ -67,6 +67,18 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
 
         messages.success(self.request, 'Successfully Updated')
         return super(ModelFormMixin, self).form_valid(form)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProjectUpdateView, self).get_context_data(**kwargs)
+
+        project_resource = project_service.get_project_resource_for_user(self.request.user,
+                                                                         context['project'].id)
+
+        if project_resource:
+            context['project_resource_task_breakdown_url'] = reverse(
+                'projectmanager:update_project_resource_task_breakdown', kwargs={'pk': project_resource.id}
+            )
+        return context
 
 
 class ProjectCreateView(SuccessMessageMixin, generic.CreateView):

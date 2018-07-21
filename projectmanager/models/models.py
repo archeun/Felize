@@ -25,7 +25,7 @@ class Employee(models.Model):
         ordering = ('employee_id',)
 
     def __str__(self):
-        return self.first_name + " : " + self.last_name + " (" + self.user.username + ")"
+        return self.first_name + " " + self.middle_name + " " + self.last_name + " (" + self.user.username + ")"
 
 
 class Client(models.Model):

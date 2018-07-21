@@ -1,4 +1,4 @@
-from projectmanager.models import Project, ProjectManager, ProjectResource
+from projectmanager.models import Project, ProjectManager, ProjectResource, Task
 
 
 def get_projects_for_user(user_id):
@@ -8,8 +8,18 @@ def get_projects_for_user(user_id):
     :param user_id:
     :return:
     """
-    return (Project.objects.filter(project_managers__user__username__exact=user_id) | Project.objects.filter(
+    return (Project.objects.filter(project_managers__user__id=user_id) | Project.objects.filter(
         resources__user__username__exact=user_id)).distinct()
+
+
+def get_project_resource_for_user(user, project_id):
+    """
+    Returns the ProjectResource for the given User and Project.id, if any exists. Otherwise false.
+    :param user:
+    :param project_id:
+    :return ProjectResource:
+    """
+    return ProjectResource.objects.filter(employee_id=user.employee.id, project_id=project_id).first()
 
 
 def save(project, update=True, project_managers=None, project_resources=None):
@@ -43,3 +53,18 @@ def save(project, update=True, project_managers=None, project_resources=None):
             project_resource.employee = person
             project_resource.save()
     return project
+
+
+def get_tasks_by_project_resource(prid):
+    return Task.objects.filter(owner_id=prid).all()
+
+
+def get_project_resource_by_id(prid):
+    """
+
+    Returns the ProjectResource having the given primary key
+    :param prid:
+    :return:
+    :rtype: ProjectResource
+    """
+    return ProjectResource.objects.filter(id=prid).first()
