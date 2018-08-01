@@ -1,39 +1,31 @@
 from django.db import transaction
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
-
-from projectmanager.forms.ProjectResourceForm import ProjectResourceTaskFormSet, ProjectResourceForm
-from projectmanager.models import ProjectResource
+from projectmanager.forms.ProjectResourceForm import get_project_resource_tasks_form, ProjectResourceForm
+from projectmanager.models import ProjectResource, ProjectManager
 from projectmanager.services import project_service
-
-
-def project_resource_task_breakdown(request, prid):
-    projects_for_user = project_service.get_projects_for_user(request.user.id)
-    project = projects_for_user.filter(projectresource__id=prid).first()
-    if not projects_for_user.filter(projectresource__id=prid).first():
-        return HttpResponse('Unauthorized', status=401)
-    tasks = project_service.get_tasks_by_project_resource(prid)
-    context = {'tasks': tasks, 'project_name': project.name,
-               'employee_name': project_service.get_project_resource_by_id(prid).employee}
-
-    return render(request, 'projectmanager/task_breakdown/update_project_resource_task_breakdown.html', context)
 
 
 class ProjectResourceTaskCreate(CreateView):
     model = ProjectResource
     form_class = ProjectResourceForm
-    success_url = reverse_lazy('projectmanager:create_project_resource_task_breakdown')
     template_name = 'projectmanager/task_breakdown/create_project_resource_task_breakdown.html'
 
     def get_context_data(self, **kwargs):
-        data = super(ProjectResourceTaskCreate, self).get_context_data(**kwargs)
+        context = super(ProjectResourceTaskCreate, self).get_context_data(**kwargs)
+        project_manager_obj = ProjectManager.objects.filter(employee__id=self.request.user.employee.id).first()
+        is_project_manager = project_manager_obj is not None
         if self.request.POST:
-            data['project_resource_tasks'] = ProjectResourceTaskFormSet(self.request.POST)
+            forms = context['project_resource_tasks'] = get_project_resource_tasks_form(self.get_form(), False,
+                                                                                        is_project_manager,
+                                                                                        data=self.request.POST)
         else:
-            data['project_resource_tasks'] = ProjectResourceTaskFormSet()
-        return data
+            forms = context['project_resource_tasks'] = get_project_resource_tasks_form(self.get_form(), False,
+                                                                                        is_project_manager)
+
+        context['project_resource_tasks'] = forms['task_form_set']
+        context['form'] = forms['project_resource_form']
+        return context
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -50,16 +42,40 @@ class ProjectResourceTaskCreate(CreateView):
 class ProjectResourceTaskUpdate(UpdateView):
     model = ProjectResource
     form_class = ProjectResourceForm
-    success_url = reverse_lazy('projectmanager:create_project_resource_task_breakdown')
     template_name = 'projectmanager/task_breakdown/create_project_resource_task_breakdown.html'
 
     def get_context_data(self, **kwargs):
-        data = super(ProjectResourceTaskUpdate, self).get_context_data(**kwargs)
+        context = super(ProjectResourceTaskUpdate, self).get_context_data(**kwargs)
+
+        project_resource = ProjectResource.objects.filter(id=self.kwargs['pk']).first()
+        project = ProjectResource.objects.filter(id=self.kwargs['pk']).first().project
+        project_manager_obj = ProjectManager.objects.filter(employee__id=self.request.user.employee.id,
+                                                            project_id=project.id).first()
+        is_self = project_resource.employee.id == self.request.user.employee.id
+        is_project_manager = project_manager_obj is not None
+
+        context['project_name'] = self.object.project.name
+        context['employee_name'] = self.object.employee
+
         if self.request.POST:
-            data['project_resource_tasks'] = ProjectResourceTaskFormSet(self.request.POST, instance=self.object)
+            forms = get_project_resource_tasks_form(self.get_form(), is_self, is_project_manager,
+                                                    data=self.request.POST,
+                                                    instance=self.object)
         else:
-            data['project_resource_tasks'] = ProjectResourceTaskFormSet(instance=self.object)
-        return data
+            forms = get_project_resource_tasks_form(self.get_form(), is_self, is_project_manager, instance=self.object)
+
+        context['project_resource_tasks'] = forms['task_form_set']
+        context['form'] = forms['project_resource_form']
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        project = ProjectResource.objects.filter(id=kwargs['pk']).first().project
+
+        projects_for_user = project_service.get_projects_for_user(request.user.id)
+        if not projects_for_user.filter(id=project.id).first():
+            return HttpResponse('Unauthorized', status=401)
+        return super(ProjectResourceTaskUpdate, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         context = self.get_context_data()

@@ -90,6 +90,9 @@ class ProjectResource(models.Model):
         else:
             return self.employee.first_name + " : {" + self.project.__str__() + "}"
 
+    def get_absolute_url(self):
+        return reverse('projectmanager:update_project_resource_task_breakdown', kwargs={'pk': self.id})
+
 
 class ProjectManager(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)

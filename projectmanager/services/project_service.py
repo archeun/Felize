@@ -9,7 +9,7 @@ def get_projects_for_user(user_id):
     :return:
     """
     return (Project.objects.filter(project_managers__user__id=user_id) | Project.objects.filter(
-        resources__user__username__exact=user_id)).distinct()
+        resources__user__id=user_id)).distinct()
 
 
 def get_project_resource_for_user(user, project_id):
