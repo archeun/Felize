@@ -135,11 +135,15 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('projectmanager:update_work_entries', kwargs={'pk': self.id})
+
 
 class WorkEntry(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     worked_date = models.DateField()
     duration = models.IntegerField()
+    comment = models.TextField(max_length=1000, blank=True, null=True)
 
     class Meta:
         ordering = ('worked_date',)
