@@ -48,7 +48,7 @@
     {% if list_items|length > 0 %}
         <tfoot>
         <tr>
-            <th colspan="3">
+            <th colspan="{{ list_config.cols|length }}">
                 <div class="ui right floated mini pagination menu">
                     {% if page_obj.has_previous %}
                         <a href="?{{ list_config.params.url_encoded_filters }}&page={{ page_obj.previous_page_number }}"
@@ -72,7 +72,7 @@
             </th>
         </tr>
         <tr>
-            <th colspan="3">
+            <th colspan="{{ list_config.cols|length }}">
                 <div class="ui right aligned">
                     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     [ {{ page_obj.paginator.count }}

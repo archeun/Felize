@@ -25,7 +25,10 @@ class Employee(models.Model):
         ordering = ('employee_id',)
 
     def __str__(self):
-        return self.first_name + " " + self.middle_name + " " + self.last_name + " (" + self.user.username + ")"
+        return self.get_full_name() + " (" + self.user.username + ")"
+
+    def get_full_name(self):
+        return self.first_name + " " + self.middle_name + " " + self.last_name
 
 
 class Client(models.Model):
@@ -91,7 +94,7 @@ class ProjectResource(models.Model):
             return self.employee.first_name + " : {" + self.project.__str__() + "}"
 
     def get_absolute_url(self):
-        return reverse('projectmanager:update_project_resource_task_breakdown', kwargs={'pk': self.id})
+        return reverse('projectmanager:update_project_resource', kwargs={'pk': self.id})
 
 
 class ProjectManager(models.Model):

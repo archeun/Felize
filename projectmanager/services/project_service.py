@@ -87,3 +87,13 @@ def get_project_resource_by_id(prid):
     :rtype: ProjectResource
     """
     return ProjectResource.objects.filter(id=prid).first()
+
+
+def get_project_resources_for_project(project_id):
+    """
+
+    Returns the ProjectResource set in the Project for the given project_id
+    :param project_id:
+    :return:
+    """
+    return ProjectResource.objects.filter(project_id=project_id)

@@ -58,7 +58,7 @@ class ProjectListView(generic.ListView):
 class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
     model = Project
     fields = '__all__'
-    template_name = 'projectmanager/project/create.html'
+    template_name = 'projectmanager/project/detail.html'
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -76,7 +76,7 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
 
         if project_resource:
             context['project_resource_task_breakdown_url'] = reverse(
-                'projectmanager:update_project_resource_task_breakdown', kwargs={'pk': project_resource.id}
+                'projectmanager:update_project_resource', kwargs={'pk': project_resource.id}
             )
         return context
 
@@ -84,7 +84,7 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
 class ProjectCreateView(SuccessMessageMixin, generic.CreateView):
     model = Project
     fields = '__all__'
-    template_name = 'projectmanager/project/create.html'
+    template_name = 'projectmanager/project/detail.html'
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

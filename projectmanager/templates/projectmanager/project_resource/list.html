@@ -1,0 +1,45 @@
+{% extends "../layout/felize_app.html" %}
+{% load list_component %}
+
+{% block content %}
+    <div class="ui mini teal">
+        <div class="ui accordion">
+            <div class="title active">
+                <i class="filter icon right aligned"></i> Filter Project Resource
+            </div>
+            <div class="content">
+                <div class="transition">
+                    <div class="ui segment">
+                        <div class="ui form">
+                            <form method="get">
+                                <div class="ui form">
+                                    <div class="fields">
+                                        <div class="four wide field">
+                                            {{ project_resource_filter.form.employee.errors }}
+                                            <label for="{{ project_resource_filter.form.employee.id_for_label }}">
+                                                Employee
+                                            </label>
+                                            {{ project_resource_filter.form.employee }}
+                                        </div>
+                                        <div class="six wide field">
+                                            {{ project_resource_filter.form.resource_type.errors }}
+                                            <label for="{{ project_resource_filter.form.resource_type.id_for_label }}">
+                                                Resource Type
+                                            </label>
+                                            {{ project_resource_filter.form.resource_type }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <button class="ui button primary" type="submit">Search</button>
+                                <input class="ui button" type="button" value="Reset"
+                                       onclick="window.location='{{ project_resource_filter_reset_url }}'">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% render_list project_resources project_resource_list_config %}
+{% endblock %}
