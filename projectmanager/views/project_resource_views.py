@@ -10,13 +10,13 @@ from projectmanager.services import project_service
 from projectmanager.services.list_service import get_project_resource_list_config
 
 
-class ProjectResourceTaskCreateView(CreateView):
+class ProjectResourceCreateView(CreateView):
     model = ProjectResource
     form_class = ProjectResourceForm
     template_name = 'projectmanager/project_resource/detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectResourceTaskCreateView, self).get_context_data(**kwargs)
+        context = super(ProjectResourceCreateView, self).get_context_data(**kwargs)
         project_manager_obj = ProjectManager.objects.filter(employee__id=self.request.user.employee.id).first()
         is_project_manager = project_manager_obj is not None
         if self.request.POST:
@@ -40,16 +40,16 @@ class ProjectResourceTaskCreateView(CreateView):
             if project_resource_tasks.is_valid():
                 project_resource_tasks.instance = self.object
                 project_resource_tasks.save()
-        return super(ProjectResourceTaskCreateView, self).form_valid(form)
+        return super(ProjectResourceCreateView, self).form_valid(form)
 
 
-class ProjectResourceTaskUpdateView(UpdateView):
+class ProjectResourceUpdateView(UpdateView):
     model = ProjectResource
     form_class = ProjectResourceForm
     template_name = 'projectmanager/project_resource/detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectResourceTaskUpdateView, self).get_context_data(**kwargs)
+        context = super(ProjectResourceUpdateView, self).get_context_data(**kwargs)
 
         project_resource = ProjectResource.objects.filter(id=self.kwargs['pk']).first()
         project = ProjectResource.objects.filter(id=self.kwargs['pk']).first().project
@@ -79,7 +79,7 @@ class ProjectResourceTaskUpdateView(UpdateView):
         projects_for_user = project_service.get_projects_for_user(request.user.id)
         if not projects_for_user.filter(id=project.id).first():
             return HttpResponse('Unauthorized', status=401)
-        return super(ProjectResourceTaskUpdateView, self).get(request, *args, **kwargs)
+        return super(ProjectResourceUpdateView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -90,7 +90,7 @@ class ProjectResourceTaskUpdateView(UpdateView):
             if project_resource_tasks.is_valid():
                 project_resource_tasks.instance = self.object
                 project_resource_tasks.save()
-        return super(ProjectResourceTaskUpdateView, self).form_valid(form)
+        return super(ProjectResourceUpdateView, self).form_valid(form)
 
 
 class ProjectResourceListView(ListView):
