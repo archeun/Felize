@@ -6,15 +6,17 @@
         </h4>
     </div>
 
-    <div class="one wide column center aligned">
-        <h3>
+    {% if list_config.params.add_object %}
+        <div class="one wide column center aligned">
+            <h3>
 
-            <a data-tooltip="{{ list_config.params.add_object.button_tooltip }}"
-               href="{{ list_config.params.add_object.url }}">
-                <i class="teal plus circle icon"></i>
-            </a>
-        </h3>
-    </div>
+                <a data-tooltip="{{ list_config.params.add_object.button_tooltip }}"
+                   href="{{ list_config.params.add_object.url }}">
+                    <i class="teal plus circle icon"></i>
+                </a>
+            </h3>
+        </div>
+    {% endif %}
 </div>
 
 <table class="ui teal celled small compact striped table">

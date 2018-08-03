@@ -18,7 +18,10 @@
                     <i class="ellipsis vertical icon"></i>
                     <div class="menu">
                         <div class="item"><a href="{% url 'projectmanager:project_list' %}">User Stories</a></div>
-                        <div class="item"><a href="{% url 'projectmanager:project_resource_list' project.id %}">Resources</a></div>
+                        {% if project %}
+                            <div class="item"><a href="{% url 'projectmanager:project_resource_list' project.id %}">Resources</a>
+                            </div>
+                        {% endif %}
                         {% if project_resource_task_breakdown_url %}
                             <div class="item">
                                 <a href="{{ project_resource_task_breakdown_url }}">
@@ -75,16 +78,19 @@
                     </div>
                 </div>
                 <div class="ui horizontal divider"></div>
-                <div class=" ui sixteen column teal white segment">
-                    <div class="ui buttons">
-                        <button class="ui button" onclick="window.location='{% url 'projectmanager:project_list' %}'"
-                                type="button">
-                            Cancel
-                        </button>
-                        <div class="or"></div>
-                        <button class="ui teal button">Save</button>
+                {% if can_edit %}
+                    <div class=" ui sixteen column teal white segment">
+                        <div class="ui buttons">
+                            <button class="ui button"
+                                    onclick="window.location='{% url 'projectmanager:project_list' %}'"
+                                    type="button">
+                                Cancel
+                            </button>
+                            <div class="or"></div>
+                            <button class="ui teal button">Save</button>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
 
             </form>
         </div>

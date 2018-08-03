@@ -3,10 +3,12 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
 from django.views.generic.edit import ModelFormMixin
 
+from projectmanager.forms.ProjectForm import ProjectForm
 from projectmanager.model_filters import ProjectFilter
-from projectmanager.models import Project, ProjectManager, ProjectResource
+from projectmanager.models import Project
 from django.views import generic
-
+from projectmanager.authorization.authorization_service import FelizePermissionRequiredMixin, is_user_project_manager, \
+    is_entity_accessible
 from projectmanager.services.list_service import get_project_list_config
 import projectmanager.services.project_service as project_service
 from django.contrib import messages
@@ -24,12 +26,20 @@ class ProjectListView(generic.ListView):
         url_params = self.request.GET.copy()
         if url_params.get('page'):
             del url_params['page']
-        context['project_list_config'] = get_project_list_config({
+
+        project_list_config = {
             'name': 'Projects List',
             'is_paginated': True,
             'url_encoded_filters': url_params.urlencode(),
-            'add_object': {"url": reverse("projectmanager:create_project"), "button_tooltip": "Add Project"}
-        })
+        }
+
+        is_project_manager = is_user_project_manager(self.request.user.id)
+        if is_project_manager:
+            project_list_config['add_object'] = {"url": reverse("projectmanager:create_project"),
+                                                 "button_tooltip": "Add Project"}
+
+        context['project_list_config'] = get_project_list_config(project_list_config)
+
         filtered_project_list = project_filter.qs
 
         paginator = Paginator(filtered_project_list, self.paginate_by)
@@ -56,9 +66,16 @@ class ProjectListView(generic.ListView):
 
 
 class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
+    form_class = ProjectForm
     model = Project
-    fields = '__all__'
     template_name = 'projectmanager/project/detail.html'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if not is_entity_accessible(self.object, self.request.user, 'edit'):
+            for field in form.fields:
+                form.fields[field].widget.attrs['disabled'] = True
+        return form
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -71,20 +88,26 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProjectUpdateView, self).get_context_data(**kwargs)
 
-        project_resource = project_service.get_project_resource_for_user(self.request.user,
-                                                                         context['project'].id)
-
-        if project_resource:
+        is_project_resource = project_service.get_project_resource_for_user(self.request.user,
+                                                                            context['project'].id)
+        context['can_edit'] = is_entity_accessible(context['project'], self.request.user, 'edit')
+        if is_project_resource:
             context['project_resource_task_breakdown_url'] = reverse(
-                'projectmanager:update_project_resource', kwargs={'pk': project_resource.id}
+                'projectmanager:update_project_resource', kwargs={'pk': is_project_resource.id}
             )
         return context
 
 
-class ProjectCreateView(SuccessMessageMixin, generic.CreateView):
+class ProjectCreateView(FelizePermissionRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model = Project
     fields = '__all__'
     template_name = 'projectmanager/project/detail.html'
+    custom_permission_check = 'is_user_project_manager'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProjectCreateView, self).get_context_data(**kwargs)
+        context['is_user_project_manager'] = is_user_project_manager(self.request.user.id)
+        return context
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
