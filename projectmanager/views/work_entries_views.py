@@ -1,9 +1,11 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, ListView
 from projectmanager.forms.TaskForm import get_work_entry_form, TaskForm
+from projectmanager.forms.WorkEntryTaskSwitchForm import WorkEntryTaskSwitchForm
 from projectmanager.model_filters.ProjectResourceFilter import ProjectResourceFilter
 from projectmanager.models import WorkEntry, ProjectManager, Task
 from projectmanager.services import project_service
@@ -60,6 +62,7 @@ class WorkEntryUpdateView(UpdateView):
 
         context['project_name'] = project.name
         context['employee_name'] = self.request.user.employee.get_full_name()
+        context['work_entry_task_switch_form'] = WorkEntryTaskSwitchForm(user_story_id=task.user_story_id)
 
         if self.request.POST:
             forms = get_work_entry_form(self.get_form(), is_self, is_project_manager,
@@ -80,6 +83,12 @@ class WorkEntryUpdateView(UpdateView):
         if not projects_for_user.filter(id=project.id).first():
             return HttpResponse('Unauthorized', status=401)
         return super(WorkEntryUpdateView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if request.POST and 'switch-task-btn' in request.POST:
+            switched_task = Task.objects.get(id=request.POST['task'])
+            return redirect(switched_task)
+        return super(WorkEntryUpdateView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         context = self.get_context_data()

@@ -9,6 +9,21 @@
             </h4>
         </div>
     </div>
+    <div class="ui form">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="fields ui grid">
+                <div class="thirteen wide column field">
+                    {{ work_entry_task_switch_form.task }}
+                </div>
+                <div class="three wide column field right aligned">
+                    <button name="switch-task-btn" class="ui labeled icon button">
+                        <i class="sign out alternate icon"></i>Switch To Task
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="ui segment">
         <div class="ui form">
             <form action="" method="post">
