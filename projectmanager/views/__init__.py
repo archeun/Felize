@@ -3,3 +3,5 @@ from .base_views import dashboard
 from .project_views import ProjectUpdateView, ProjectListView, ProjectCreateView
 from .project_resource_views import ProjectResourceListView, ProjectResourceCreateView, ProjectResourceUpdateView
 from .work_entries_views import WorkEntryCreateView, WorkEntryUpdateView, WorkEntryListView
+from .api_views import ProjectResourcesChartJsView
+from .report_views import project_resources_chart

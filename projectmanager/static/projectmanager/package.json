@@ -4,6 +4,7 @@
   "description": "Felize - A Project Management Application",
   "main": "index.js",
   "dependencies": {
+    "chart.js": "^2.7.2",
     "semantic-ui": "^2.3.2"
   },
   "devDependencies": {},

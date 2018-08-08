@@ -23,6 +23,7 @@
     <script src="{% static 'projectmanager/felize/lib/multi-select/js/jquery.multi-select.js' %}"
             type="text/javascript"></script>
     <script src="{% static 'projectmanager/formset/js/jquery.formset.js' %}"></script>
+    <script src="{% static 'projectmanager/node_modules/chart.js/dist/Chart.js' %}"></script>
 </head>
 <body>
 
@@ -33,7 +34,12 @@
     <a href="{% url 'projectmanager:base_dashboard' %}" class="item active">Dashboard</a>
     <a href="{% url 'projectmanager:organization_list' %}" class="item">Organizations</a>
     <a href="{% url 'projectmanager:project_list' %}" class="item">Projects</a>
-
+    <div class="ui dropdown item">
+        Reports <i class="dropdown icon"></i>
+        <div class="menu">
+            <a  href="{% url 'projectmanager:reports_project_resources' %}" class="item">Project Resources</a>
+        </div>
+    </div>
     {% if user.is_authenticated %}
 
         <div class="ui right dropdown item">

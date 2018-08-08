@@ -1,0 +1,55 @@
+{% extends "../layout/felize_app.html" %}
+{% block content %}
+    <canvas id="canvas"></canvas>
+
+    <script type="application/javascript">
+        $(document).ready(function (e) {
+
+            const config = {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Project Vs. Resource Count'
+                    }
+                }
+            };
+
+            $.get("{% url 'projectmanager:api_reports_project_resources' %}", function (project_resources, status) {
+                const ctx = document.getElementById('canvas').getContext('2d');
+                let project_names = [];
+                let project_resource_count = [];
+                let colors = [];
+                for (let i = 0; i < project_resources.length; i++) {
+                    project_names.push(project_resources[i]['name']);
+                    project_resource_count.push(project_resources[i]['count']);
+                    colors.push(getRandomColor());
+                }
+                config.data.labels = project_names;
+                config.data.datasets = [{
+                    label: 'Resource Count',
+                    data: project_resource_count,
+                    backgroundColor: colors,
+                    fill: true,
+                }];
+                window.myLine = new Chart(ctx, config);
+            });
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+        });
+
+    </script>
+{% endblock %}
