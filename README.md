@@ -1,4 +1,4 @@
-# Felize - An open source web based Project Management App
+# Felize - An open source Web Based Project Management Application
 
 **Charts**
 
