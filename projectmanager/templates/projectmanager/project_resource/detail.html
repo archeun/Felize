@@ -69,6 +69,8 @@
                                 {% for field in form.visible_fields %}
                                     <th>{{ field.label|capfirst }}</th>
                                 {% endfor %}
+                                <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                         {% endif %}
@@ -84,6 +86,17 @@
                                     {{ field }}
                                 </td>
                             {% endfor %}
+                            {% for hidden in form.hidden_fields %}
+                                {% if hidden.name == 'id' and hidden.value %}
+                                    <td>
+                                        <a target="_blank"  title="View Work Break Down"
+                                           href="{% url 'projectmanager:update_work_entries' hidden.value %}">
+                                            <i class="tasks icon"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                            <td></td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -97,7 +110,7 @@
 
         $('.formset_row').formset({
             addText: '<i class="plus square icon"></i>Add Task',
-            deleteText: '<i class="trash alternate icon"></i>',
+            deleteText: '<i class="trash alternate icon" title="Delete Task"></i>',
             prefix: 'task_set',
             added: function (row) {
                 $(row).find("textarea").height(20);
@@ -114,6 +127,7 @@
         body.on('blur', 'textarea', function () {
             $(this).height(20);
         });
+        $('td:nth-child(6),th:nth-child(6)').hide();
 
     </script>
 {% endblock %}

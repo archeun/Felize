@@ -45,7 +45,7 @@
                 {% csrf_token %}
                 <div class="ui form">
                     <div class="fields ui two column grid">
-                        <div class="four wide field">
+                        <div class="two wide field">
                             {{ form.code.errors }}
                             <label for="{{ form.code.id_for_label }}">Code</label>
                             {{ form.code }}
@@ -59,6 +59,11 @@
                             {{ form.client.errors }}
                             <label for="{{ form.client.id_for_label }}">Client</label>
                             {{ form.client }}
+                        </div>
+                        <div class="two wide field">
+                            {{ form.status.errors }}
+                            <label for="{{ form.status.id_for_label }}">Status</label>
+                            {{ form.status }}
                         </div>
                     </div>
                     <h4 class="ui horizontal divider header teal">

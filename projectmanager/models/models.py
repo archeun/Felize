@@ -43,9 +43,23 @@ class Client(models.Model):
 
 
 class Project(models.Model):
-    code = models.CharField(max_length=5, blank=False, unique=True)
+    code = models.CharField(max_length=10, blank=False, unique=True)
     name = models.CharField(max_length=255, blank=False)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    approved_work_days = models.DecimalField(null=True, max_digits=6, decimal_places=2, blank=True)
+    ACTIVE = 'ACT'
+    CLOSED = 'CLS'
+    PROJECT_STATUS_CHOICES = (
+        (ACTIVE, 'Active'),
+        (CLOSED, 'Closed'),
+    )
+    status = models.CharField(
+        max_length=3,
+        choices=PROJECT_STATUS_CHOICES,
+        default=ACTIVE,
+    )
     project_managers = models.ManyToManyField(
         Employee,
         related_name='project_manager',
@@ -79,13 +93,76 @@ class ProjectResourceType(models.Model):
         return self.name
 
 
+class ProjectSprint(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=False)
+    start_date = models.DateField(null=False, blank=False)
+    end_date = models.DateField(null=False, blank=False)
+    ACTIVE = 'ACT'
+    COMPLETED = 'CMP'
+    PROJECT_SPRINT_STATUS_CHOICES = (
+        (ACTIVE, 'Active'),
+        (COMPLETED, 'Completed'),
+    )
+    status = models.CharField(
+        max_length=3,
+        choices=PROJECT_SPRINT_STATUS_CHOICES,
+        default=ACTIVE,
+    )
+
+
+class Attachment(models.Model):
+    name = models.CharField(max_length=255, blank=True)
+    description = models.TextField(max_length=2048, blank=False)
+    url = models.CharField(max_length=2048, blank=True)
+    file_path = models.CharField(max_length=2048, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class MilestoneType(models.Model):
+    name = models.CharField(max_length=255, blank=False)
+
+
+class MilestoneOwnerType(models.Model):
+    name = models.CharField(max_length=255, blank=False)
+
+
+class ProjectMilestone(models.Model):
+    sprint = models.ForeignKey(ProjectSprint, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=False)
+    due_date = models.DateField()
+    type = models.ForeignKey(MilestoneType, on_delete=models.SET_NULL, null=True)
+    owner_type = models.ForeignKey(MilestoneOwnerType, on_delete=models.SET_NULL, null=True)
+    assigned_to = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
+    comment = models.TextField(max_length=2048, blank=True)
+
+    PENDING = 'PND'
+    IN_PROGRESS = 'INP'
+    COMPLETED = 'CMP'
+    PROJECT_MILESTONE_STATUS_CHOICES = (
+        (PENDING, 'Pending'),
+        (IN_PROGRESS, 'In-Progress'),
+        (COMPLETED, 'Completed'),
+    )
+    status = models.CharField(
+        max_length=3,
+        choices=PROJECT_MILESTONE_STATUS_CHOICES,
+        default=PENDING,
+    )
+
+
+class MilestoneAttachment(models.Model):
+    milestone = models.ForeignKey(ProjectMilestone, on_delete=models.CASCADE)
+    attachment = models.ForeignKey(Attachment, on_delete=models.CASCADE)
+
+
 class ProjectResource(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     resource_type = models.ForeignKey(ProjectResourceType, on_delete=models.SET_NULL, null=True)
     allocation_start_date = models.DateField(null=True, blank=True)
     allocation_end_date = models.DateField(null=True, blank=True)
-    work_hours_per_day = models.DecimalField(null=True, max_digits=4, decimal_places=2, blank=True)
+    work_hours_per_day = models.DecimalField(null=True, max_digits=6, decimal_places=2, blank=True)
 
     def __str__(self):
         if self.resource_type:
@@ -142,7 +219,7 @@ class Task(models.Model):
 class WorkEntry(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     worked_date = models.DateField()
-    duration = models.IntegerField()
+    duration = models.DecimalField(null=True, max_digits=6, decimal_places=2, blank=True)
     comment = models.TextField(max_length=1000, blank=True, null=True)
 
     class Meta:
