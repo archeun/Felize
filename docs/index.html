@@ -1,63 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="res/css/semantic/dist/semantic.min.css"/>
+    <script type="application/javascript" src="res/js/semantic.js"></script>
+</head>
 <body>
-<h2>Felize - An open source Web Based Project Management Application</h2>
 
-<h4>Charts</h4>
+<!-- Page Contents -->
+<div class="pusher">
+    <div class="ui inverted teal vertical masthead center aligned segment">
+        <div class="ui text container">
+            <h1 class="ui inverted header" style="font-size: 15em">Felize</h1>
+            <h3><code>An open source Web Based Project Management Application</code></h3>
+            <img src="res/img/felize-logo.png" height="100px">
+            <h4 class="ui horizontal header divider">By</h4>
+            <h1 class="ui inverted header" style="font-size: 6em">ArCheun</h1>
+        </div>
 
-<ul>
-    <li>
-        Generic
-        <ul>
-            <li>Project vs. Resource count</li>
-            <li>Project vs. Estimation</li>
-            <li>Project vs. Completion</li>
-            <li>Project vs. Estimation vs. Completion</li>
-            <li>Project vs. Estimation by Resource Type</li>
-        </ul>
-    </li>
-    <li>
-        Project related
-        <ul>
-            <li>Burn-down</li>
-            <li>Resource Type vs. Estimate</li>
-            <li>Resource Typ vs. Completion</li>
-            <li>Story Vs. Estimate</li>
-            <li>Story Vs. Completion</li>
-            <li>Date vs. Work Time</li>
-        </ul>
-    </li>
-</ul>
+    </div>
 
+    <h4 class="ui horizontal header divider">
+        <a href="#"><i class="star outline icon"></i>Features</a>
+    </h4>
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="five wide column">
+                <div class="ui segments">
+                    <div class="ui purple segment">
+                        <h4><i class="chart line icon"></i>Charts</h4>
+                    </div>
 
-<h4>Reports</h4>
+                    <div class="ui segment">
+                        <ul>
+                            <li>
+                                Generic
+                                <ul>
+                                    <li>Project vs. Resource count</li>
+                                    <li>Project vs. Estimation</li>
+                                    <li>Project vs. Completion</li>
+                                    <li>Project vs. Estimation vs. Completion</li>
+                                    <li>Project vs. Estimation by Resource Type</li>
+                                </ul>
+                            </li>
+                            <li>
+                                Project related
+                                <ul>
+                                    <li>Burn-down</li>
+                                    <li>Resource Type vs. Estimate</li>
+                                    <li>Resource Typ vs. Completion</li>
+                                    <li>Story Vs. Estimate</li>
+                                    <li>Story Vs. Completion</li>
+                                    <li>Date vs. Work Time</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="six wide column">
+                <div class="ui segments">
+                    <div class="ui purple segment">
+                        <h4><i class="clone outline icon"></i>Dashboard Panels</h4>
+                    </div>
+                    <div class="ui segment">
+                        <ul>
+                            <li>No. of Active Projects [number]</li>
+                            <li>No. of open tasks [number]</li>
+                            <li>No. of completed tasks [number]</li>
+                            <li>No. of closed projects for the month [number]</li>
+                            <li>Average resource velocity [number]</li>
+                            <li>Project Completion - Below X% [list]</li>
+                            <li>Project Completion - Above X% [list]</li>
+                            <li>Task completion by Project Resource [list]</li>
+                            <li>Billable/Non-Billable work time for past week [graph]</li>
+                            <li>Billable/Non-Billable work time by project [graph]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="five wide column">
+                <div class="ui segments">
+                    <div class="ui purple segment">
+                        <h4><i class="print icon"></i>Reports</h4>
+                    </div>
 
-<ul>
-    <li>
-        Generic
-        <ul>
-            <li>Project Resources</li>
-            <li>Project Estimation</li>
-            <li>Task Break Down</li>
-            <li>Work Break Down</li>
-            <li>Project vs. Estimation by Resource Type</li>
-        </ul>
-    </li>
-</ul>
+                    <div class="ui segment">
+                        <ul>
+                            <li>
+                                Generic
+                                <ul>
+                                    <li>Project Resources</li>
+                                    <li>Project Estimation</li>
+                                    <li>Task Break Down</li>
+                                    <li>Work Break Down</li>
+                                    <li>Project vs. Estimation by Resource Type</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h4>Dashboard Panels</h4>
-<ul>
-    <li>No. of Active Projects [number]</li>
-    <li>No. of open tasks [number]</li>
-    <li>No. of completed tasks [number]</li>
-    <li>No. of closed projects for the month [number]</li>
-    <li>Average resource velocity [number]</li>
-    <li>Project Completion - Below X% [list]</li>
-    <li>Project Completion - Above X% [list]</li>
-    <li>Task completion by Project Resource [list]</li>
-    <li>Billable/Non-Billable work time for past week [graph]</li>
-    <li>Billable/Non-Billable work time by project [graph]</li>
-</ul>
+    <div class="ui inverted footer segment">
+        <div class="ui container">
+            <div class="ui stackable inverted divided equal height stackable grid">
+                <div class="three wide column">
+                    <h4 class="ui inverted header">About</h4>
+                    <div class="ui inverted link list">
+                        <a href="#" class="item">Sitemap</a>
+                        <a href="#" class="item">Contact Us</a>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted header">Services</h4>
+                    <div class="ui inverted link list">
+                        <a href="#" class="item">FAQ</a>
+                    </div>
+                </div>
+                <div class="seven wide column">
+                    <h4 class="ui inverted header">Open Source Project Management</h4>
+                    <p>Felize - An open source Web Based Project Management Application.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
