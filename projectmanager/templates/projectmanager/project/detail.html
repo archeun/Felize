@@ -1,5 +1,6 @@
 {% extends "../layout/felize_app.html" %}
 {% load message_component %}
+{% load inputtype %}
 
 {% block content %}
 
@@ -67,7 +68,7 @@
                         </div>
                     </div>
                     <h4 class="ui horizontal divider header teal">
-                        <i class="users icon"></i>Management Details
+                        <i class="users icon"></i>Resource Management
                     </h4>
                     <div class="fields ui two column grid">
                         <div class="eight wide field">
@@ -82,13 +83,71 @@
                         </div>
                     </div>
                 </div>
-                <div class="ui horizontal divider"></div>
+                <h4 class="ui horizontal divider header teal">
+                    <i class="users icon"></i>Sprints
+                </h4>
+                <table class="ui teal small compact striped table">
+                    {{ project_sprints.management_form }}
+
+                    {% for form in project_sprints.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th
+                                            {% if forloop.counter == 1 %}
+                                                width="55%"
+                                            {% elif forloop.counter < 4 %}
+                                                width="13%"
+                                            {% endif %} >
+                                        {{ field.label|capfirst }}
+                                    </th>
+                                {% endfor %}
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    {% if field.field|inputtype == 'DateField' %}
+                                        <div class="ui calendar datepicker">
+                                            <div class="ui input left icon">
+                                                <i class="calendar icon"></i>
+                                                {{ field }}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                            {% for hidden in form.hidden_fields %}
+                                {% if hidden.name == 'id' and hidden.value %}
+                                    <td>
+                                        <a target="_blank" title="View Milestones"
+                                           href="{% url 'projectmanager:update_work_entries' hidden.value %}">
+                                            <i class="tasks icon"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                </table>
                 {% if can_edit %}
-                    <div class=" ui sixteen column teal white segment">
+                    <div class="ui container right aligned">
                         <div class="ui buttons">
-                            <button class="ui button"
-                                    onclick="window.location='{% url 'projectmanager:project_list' %}'"
-                                    type="button">
+                            <button class="ui button" type="button"
+                                    onclick="window.location='{% url 'projectmanager:project_list' %}'">
                                 Cancel
                             </button>
                             <div class="or"></div>
@@ -96,9 +155,29 @@
                         </div>
                     </div>
                 {% endif %}
-
             </form>
         </div>
     </div>
+    <script type="application/javascript">
+        $('.formset_row').formset({
+            addText: '<i class="plus square icon"></i>Add Sprint',
+            deleteText: '<i class="trash alternate icon" title="Delete Sprint"></i>',
+            prefix: 'task_set',
+            added: function (row) {
+                $(row).find("textarea").height(20);
+            }
+        });
 
+        let body = $("body");
+
+        body.find("textarea").height(20);
+        body.on('focus', 'textarea', function () {
+            $(this).height(100);
+        });
+
+        body.on('blur', 'textarea', function () {
+            $(this).height(20);
+        });
+        $('td:nth-child(5),th:nth-child(5)').hide();
+    </script>
 {% endblock %}

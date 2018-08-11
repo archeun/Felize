@@ -1,11 +1,12 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db import transaction
 from django.urls import reverse
 from django.views.generic.edit import ModelFormMixin
 
-from projectmanager.forms.ProjectForm import ProjectForm
+from projectmanager.forms.ProjectForm import ProjectForm, get_project_sprint_form
 from projectmanager.model_filters import ProjectFilter
-from projectmanager.models import Project
+from projectmanager.models import Project, ProjectManager
 from django.views import generic
 from projectmanager.authorization.authorization_service import FelizePermissionRequiredMixin, is_user_project_manager, \
     is_entity_accessible
@@ -83,6 +84,12 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
                              project_resources=form.cleaned_data['resources'])
 
         messages.success(self.request, 'Successfully Updated')
+        context = self.get_context_data()
+        project_sprints = context['project_sprints']
+        with transaction.atomic():
+            if project_sprints.is_valid():
+                project_sprints.instance = self.object
+                project_sprints.save()
         return super(ModelFormMixin, self).form_valid(form)
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -90,11 +97,25 @@ class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
 
         is_project_resource = project_service.get_project_resource_for_user(self.request.user,
                                                                             context['project'].id)
+
+        project_manager_obj = ProjectManager.objects.filter(employee__id=self.request.user.employee.id,
+                                                            project_id=context['project'].id).first()
+        is_project_manager = project_manager_obj is not None
+
         context['can_edit'] = is_entity_accessible(context['project'], self.request.user, 'edit')
         if is_project_resource:
             context['project_resource_task_breakdown_url'] = reverse(
                 'projectmanager:update_project_resource', kwargs={'pk': is_project_resource.id}
             )
+        if self.request.POST:
+            forms = get_project_sprint_form(self.get_form(), is_project_manager,
+                                            data=self.request.POST,
+                                            instance=self.object)
+        else:
+            forms = get_project_sprint_form(self.get_form(), is_project_manager, instance=self.object)
+
+        context['project_sprints'] = forms['sprint_form_set']
+        context['form'] = forms['project_form']
         return context
 
 
