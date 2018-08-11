@@ -5,3 +5,4 @@ from .project_resource_views import ProjectResourceListView, ProjectResourceCrea
 from .work_entries_views import WorkEntryCreateView, WorkEntryUpdateView, WorkEntryListView
 from .api_views import ProjectResourcesChartJsView
 from .report_views import project_resources_chart
+from .sprint_milestones_views import SprintMilestonesUpdateView

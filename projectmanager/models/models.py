@@ -110,6 +110,12 @@ class ProjectSprint(models.Model):
         default=ACTIVE,
     )
 
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('projectmanager:update_sprint_milestones', kwargs={'pk': self.id})
+
 
 class Attachment(models.Model):
     name = models.CharField(max_length=255, blank=True)
@@ -127,13 +133,13 @@ class MilestoneOwnerType(models.Model):
     name = models.CharField(max_length=255, blank=False)
 
 
-class ProjectMilestone(models.Model):
+class SprintMilestone(models.Model):
     sprint = models.ForeignKey(ProjectSprint, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False)
     due_date = models.DateField()
-    type = models.ForeignKey(MilestoneType, on_delete=models.SET_NULL, null=True)
-    owner_type = models.ForeignKey(MilestoneOwnerType, on_delete=models.SET_NULL, null=True)
-    assigned_to = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
+    type = models.ForeignKey(MilestoneType, on_delete=models.SET_NULL, null=True, blank=True)
+    owner_type = models.ForeignKey(MilestoneOwnerType, on_delete=models.SET_NULL, null=True, blank=True)
+    assigned_to = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
     comment = models.TextField(max_length=2048, blank=True)
 
     PENDING = 'PND'
@@ -152,7 +158,7 @@ class ProjectMilestone(models.Model):
 
 
 class MilestoneAttachment(models.Model):
-    milestone = models.ForeignKey(ProjectMilestone, on_delete=models.CASCADE)
+    milestone = models.ForeignKey(SprintMilestone, on_delete=models.CASCADE)
     attachment = models.ForeignKey(Attachment, on_delete=models.CASCADE)
 
 

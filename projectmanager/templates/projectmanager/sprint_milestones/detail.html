@@ -1,0 +1,118 @@
+{% extends "../layout/felize_app.html" %}
+{% load inputtype %}
+{% block content %}
+    <div class="ui two column grid raised segment teal">
+        <div class="sixteen wide column inverted">
+            <h4>
+                <i class="list icon"></i>
+                <span>Milestones in {{ project_name }}</span>
+            </h4>
+        </div>
+    </div>
+    <div class="ui form">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="fields ui grid">
+                <div class="thirteen wide column field">
+                    {{ sprint_milestone_switch_form.sprint }}
+                </div>
+                <div class="three wide column field right aligned">
+                    <button name="switch-sprint-btn" class="ui labeled icon button">
+                        <i class="sign out alternate icon"></i>Switch To Sprint
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="ui segment">
+        <h4>{{ form.name.value }}</h4>
+        <i>From {{ form.start_date.value }}</i>
+        <i>To {{ form.end_date.value }}</i>
+        <h4 class="ui horizontal divider header teal">
+            <i class="users icon"></i>Milestones
+        </h4>
+        <div class="ui form">
+            <form action="" method="post">
+                {% csrf_token %}
+                <table class="ui teal small compact striped table">
+                    {{ sprint_milestones.management_form }}
+
+                    {% for form in sprint_milestones.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    {% if field.name not in exclude_milestone_form_fields %}
+                                        <th {% if forloop.first %}width="55%" {% elif forloop.counter == 2 %}
+                                            width="13%" {% endif %}>{{ field.label|capfirst }}</th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                            {% for field in form.visible_fields %}
+                                {% if field.name not in exclude_milestone_form_fields %}
+                                    <td>
+                                        {% if forloop.first %}
+                                            {% for hidden in form.hidden_fields %}
+                                                {{ hidden }}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {{ field.errors.as_ul }}
+                                        {% if field.field|inputtype == 'DateField' %}
+                                            <div class="ui calendar datepicker">
+                                                <div class="ui input left icon">
+                                                    <i class="calendar icon"></i>
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {{ field }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="ui container right aligned">
+                    <button class="ui teal button">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('.formset_row').formset({
+            addText: '<i class="plus square icon"></i>Add Milestone',
+            deleteText: '<i class="trash alternate icon"></i>',
+            prefix: 'workentry_set',
+            added: function (row) {
+                $(row).find("textarea").height(20);
+                $(row).find('.datepicker').calendar({
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            let day = date.getDate() + '', month = (date.getMonth() + 1) + '',
+                                year = date.getFullYear();
+                            if (day.length < 2) day = '0' + day;
+                            if (month.length < 2) month = '0' + month;
+                            return year + '-' + month + '-' + day;
+                        }
+                    }
+                });
+            }
+        });
+        let body = $("body");
+
+        body.find("textarea").height(20);
+        body.on('focus', 'textarea', function () {
+            $(this).height(100);
+        });
+
+        body.on('blur', 'textarea', function () {
+            $(this).height(20);
+        });
+    </script>
+{% endblock %}
