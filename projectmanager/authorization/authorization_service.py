@@ -18,8 +18,8 @@ class FelizePermissionRequiredMixin(PermissionRequiredMixin):
         if self.permission_required is not None:
             has_static_permission = super(FelizePermissionRequiredMixin, self).has_permission()
         if self.custom_permission_check is not None:
-            check_permission_function = getattr(self, self.custom_permission_check)
-            has_runtime_permission = check_permission_function()
+            check_permission_function = getattr(FelizePermissionRequiredMixin, self.custom_permission_check)
+            has_runtime_permission = check_permission_function(self)
 
         return has_static_permission or has_runtime_permission
 

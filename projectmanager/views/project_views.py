@@ -120,15 +120,15 @@ class ProjectUpdateView(SuccessMessageMixin, RevisionMixin, generic.UpdateView):
         return context
 
 
-class ProjectCreateView(FelizePermissionRequiredMixin, SuccessMessageMixin, generic.CreateView):
+class ProjectCreateView(FelizePermissionRequiredMixin, SuccessMessageMixin, RevisionMixin, generic.CreateView):
     model = Project
     fields = '__all__'
     template_name = 'projectmanager/project/detail.html'
-    custom_permission_check = 'is_user_project_manager'
+    custom_permission_check = 'is_project_manager'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProjectCreateView, self).get_context_data(**kwargs)
-        context['is_user_project_manager'] = is_user_project_manager(self.request.user.id)
+        context['can_edit'] = context['is_user_project_manager'] = is_user_project_manager(self.request.user.id)
         return context
 
     def form_valid(self, form):

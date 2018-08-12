@@ -6,4 +6,4 @@ from .work_entries_views import WorkEntryCreateView, WorkEntryUpdateView, WorkEn
 from .api_views import DashboardPendingItemsPanelDataView, ProjectResourcesChartJsView
 from .report_views import project_resources_chart
 from .sprint_milestones_views import SprintMilestonesUpdateView
-from .audit_views import AuditListView, AuditDetailView
+from .audit_views import AuditListView, AuditDetailView, AuditFeedView

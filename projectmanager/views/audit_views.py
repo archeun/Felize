@@ -6,6 +6,7 @@ from django.views import generic
 from reversion.models import Version
 
 from projectmanager.model_filters.VersionFilter import VersionFilter
+from projectmanager.services.audit_service import get_previous_for_version, get_audit_feed_data
 from projectmanager.services.list_service import get_audit_list_config
 
 
@@ -55,10 +56,11 @@ class AuditListView(generic.ListView):
 
     def get_queryset(self):
         audit_action_performed_user = self.request.GET.get('audit_action_performed_user')
-        if audit_action_performed_user == '':
-            return Version.objects.all()
+        if audit_action_performed_user == '' or audit_action_performed_user is None:
+            return Version.objects.order_by('-revision__date_created').all()
         else:
-            return Version.objects.filter(revision__user_id=audit_action_performed_user)
+            return Version.objects.order_by('-revision__date_created').filter(
+                revision__user_id=audit_action_performed_user)
 
 
 class AuditDetailView(generic.DetailView):
@@ -68,7 +70,7 @@ class AuditDetailView(generic.DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(AuditDetailView, self).get_context_data(**kwargs)
         post_data = context['version'].serialized_data
-        previous = self.get_previous(context['version'].object, context['version'].revision.date_created)
+        previous = get_previous_for_version(context['version'].object, context['version'].revision.date_created)
         pre_data = "[]"
         if previous is not None:
             pre_data = previous.serialized_data
@@ -81,13 +83,13 @@ class AuditDetailView(generic.DetailView):
         context['pre_data'] = pre_data
         return context
 
-    def get_previous(self, versioned_obj, date):
-        """Returns the latest version of an object prior to the given date."""
-        versions = Version.objects.get_for_object(versioned_obj)
-        versions = versions.filter(revision__date_created__lt=date)
-        try:
-            version = versions[0]
-        except IndexError:
-            return None
-        else:
-            return version
+
+class AuditFeedView(generic.ListView):
+    template_name = 'projectmanager/audit/feed.html'
+    queryset = Version.objects.order_by('-revision__date_created').all()
+    paginate_by = 50
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(AuditFeedView, self).get_context_data(**kwargs)
+        context['audit_feed'] = get_audit_feed_data(context['object_list'])
+        return context

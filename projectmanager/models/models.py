@@ -2,9 +2,18 @@ import reversion
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.core import serializers
 
 
-class Organization(models.Model):
+class BaseFelizeModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def diff(self, old):
+        return serializers.serialize("json", [self, ])
+
+
+class Organization(BaseFelizeModel):
     name = models.CharField(max_length=1000, blank=False)
 
     class Meta:
@@ -14,7 +23,7 @@ class Organization(models.Model):
         return self.name
 
 
-class Employee(models.Model):
+class Employee(BaseFelizeModel):
     employee_id = models.CharField(max_length=100, blank=False, unique=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
@@ -32,7 +41,7 @@ class Employee(models.Model):
         return self.first_name + " " + self.middle_name + " " + self.last_name
 
 
-class Client(models.Model):
+class Client(BaseFelizeModel):
     name = models.CharField(max_length=255, blank=False)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
@@ -44,7 +53,7 @@ class Client(models.Model):
 
 
 @reversion.register()
-class Project(models.Model):
+class Project(BaseFelizeModel):
     code = models.CharField(max_length=10, blank=False, unique=True)
     name = models.CharField(max_length=255, blank=False)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -84,8 +93,17 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse("projectmanager:update_project", args=[self.id])
 
+    # def diff(self, old):
+    #     return {
+    #         'name': {'old': old['name'], 'new': self.name},
+    #         'start_date': {'old': old['start_date'], 'new': self.start_date},
+    #         'end_date': {'old': old['end_date'], 'new': self.end_date},
+    #         'status': {'old': old['status'], 'new': self.status},
+    #         'approved_work_days': {'old': old['approved_work_days'], 'new': self.approved_work_days},
+    #     }
 
-class ProjectResourceType(models.Model):
+
+class ProjectResourceType(BaseFelizeModel):
     name = models.CharField(max_length=255, blank=False)
 
     class Meta:
@@ -96,7 +114,7 @@ class ProjectResourceType(models.Model):
 
 
 @reversion.register()
-class ProjectSprint(models.Model):
+class ProjectSprint(BaseFelizeModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False)
     start_date = models.DateField(null=False, blank=False)
@@ -119,8 +137,16 @@ class ProjectSprint(models.Model):
     def get_absolute_url(self):
         return reverse('projectmanager:update_sprint_milestones', kwargs={'pk': self.id})
 
+    # def diff(self, old):
+    #     return {
+    #         'name': {'old': old['name'], 'new': self.name},
+    #         'start_date': {'old': old['start_date'], 'new': self.start_date},
+    #         'end_date': {'old': old['end_date'], 'new': self.end_date},
+    #         'status': {'old': old['status'], 'new': self.status},
+    #     }
 
-class Attachment(models.Model):
+
+class Attachment(BaseFelizeModel):
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(max_length=2048, blank=False)
     url = models.CharField(max_length=2048, blank=True)
@@ -128,16 +154,16 @@ class Attachment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class MilestoneType(models.Model):
+class MilestoneType(BaseFelizeModel):
     name = models.CharField(max_length=255, blank=False)
 
 
-class MilestoneOwnerType(models.Model):
+class MilestoneOwnerType(BaseFelizeModel):
     name = models.CharField(max_length=255, blank=False)
 
 
 @reversion.register()
-class SprintMilestone(models.Model):
+class SprintMilestone(BaseFelizeModel):
     sprint = models.ForeignKey(ProjectSprint, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False)
     due_date = models.DateField()
@@ -163,14 +189,25 @@ class SprintMilestone(models.Model):
     def __str__(self):
         return self.sprint.__str__() + " : " + self.name
 
+    # def diff(self, old):
+    #     return {
+    #         'name': {'old': old['name'], 'new': self.name},
+    #         'due_date': {'old': old['due_date'], 'new': self.due_date},
+    #         'type': {'old': old['type_id'], 'new': self.type},
+    #         'owner_type': {'old': old['owner_type_id'], 'new': self.owner_type},
+    #         'assigned_to': {'old': old['assigned_to_id'], 'new': self.assigned_to},
+    #         'comment': {'old': old['comment'], 'new': self.comment},
+    #         'status': {'old': old['status'], 'new': self.status},
+    #     }
 
-class MilestoneAttachment(models.Model):
+
+class MilestoneAttachment(BaseFelizeModel):
     milestone = models.ForeignKey(SprintMilestone, on_delete=models.CASCADE)
     attachment = models.ForeignKey(Attachment, on_delete=models.CASCADE)
 
 
 @reversion.register()
-class ProjectResource(models.Model):
+class ProjectResource(BaseFelizeModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     resource_type = models.ForeignKey(ProjectResourceType, on_delete=models.SET_NULL, null=True)
@@ -187,8 +224,16 @@ class ProjectResource(models.Model):
     def get_absolute_url(self):
         return reverse('projectmanager:update_project_resource', kwargs={'pk': self.id})
 
+    # def diff(self, old):
+    #     return {
+    #         'resource_type': {'old': old['resource_type'], 'new': self.resource_type},
+    #         'allocation_start_date': {'old': old['allocation_start_date'], 'new': self.allocation_start_date},
+    #         'allocation_end_date': {'old': old['allocation_end_date'], 'new': self.allocation_end_date},
+    #         'work_hours_per_day': {'old': old['work_hours_per_day'], 'new': self.work_hours_per_day}
+    #     }
 
-class ProjectManager(models.Model):
+
+class ProjectManager(BaseFelizeModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
@@ -197,7 +242,7 @@ class ProjectManager(models.Model):
 
 
 @reversion.register()
-class UserStory(models.Model):
+class UserStory(BaseFelizeModel):
     title = models.CharField(max_length=1000, blank=False)
     description = models.TextField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -206,7 +251,7 @@ class UserStory(models.Model):
         return self.project.name + " : " + self.title
 
 
-class TaskStatus(models.Model):
+class TaskStatus(BaseFelizeModel):
     name = models.CharField(max_length=255, blank=False)
 
     class Meta:
@@ -217,7 +262,7 @@ class TaskStatus(models.Model):
 
 
 @reversion.register()
-class Task(models.Model):
+class Task(BaseFelizeModel):
     title = models.CharField(max_length=1000, blank=False)
     description = models.TextField()
     user_story = models.ForeignKey(UserStory, on_delete=models.CASCADE)
@@ -231,9 +276,18 @@ class Task(models.Model):
     def get_absolute_url(self):
         return reverse('projectmanager:update_work_entries', kwargs={'pk': self.id})
 
+    # def diff(self, old):
+    #     return {
+    #         'title': {'old': old['title'], 'new': self.title},
+    #         'description': {'old': old['description'], 'new': self.description},
+    #         'status': {'old': old['status'], 'new': self.status},
+    #         'owner': {'old': old['owner'], 'new': self.owner},
+    #         'estimated_time': {'old': old['estimated_time'], 'new': self.estimated_time}
+    #     }
+
 
 @reversion.register()
-class WorkEntry(models.Model):
+class WorkEntry(BaseFelizeModel):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     worked_date = models.DateField()
     duration = models.DecimalField(null=True, max_digits=6, decimal_places=2, blank=True)
@@ -244,3 +298,11 @@ class WorkEntry(models.Model):
 
     def __str__(self):
         return self.task.title
+
+    # def diff(self, old):
+    #     return {
+    #         'worked_date': {'old': old['worked_date'], 'new': self.worked_date},
+    #         'duration': {'old': old['duration'], 'new': self.duration},
+    #         'comment': {'old': old['comment'], 'new': self.comment},
+    #         'owner': {'old': old['owner'], 'new': self.owner}
+    #     }
