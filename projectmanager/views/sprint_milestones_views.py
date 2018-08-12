@@ -2,6 +2,7 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import UpdateView
+from reversion.views import RevisionMixin
 
 from projectmanager.forms.MilestoneSprintSwitchForm import MilestoneSprintSwitchForm
 from projectmanager.forms.SprintMilestones import get_sprint_milestones_form, ProjectSprintForm
@@ -9,7 +10,7 @@ from projectmanager.models import ProjectManager, Task, ProjectSprint
 from projectmanager.services import project_service
 
 
-class SprintMilestonesUpdateView(UpdateView):
+class SprintMilestonesUpdateView(RevisionMixin, UpdateView):
     model = ProjectSprint
     form_class = ProjectSprintForm
     template_name = 'projectmanager/sprint_milestones/detail.html'

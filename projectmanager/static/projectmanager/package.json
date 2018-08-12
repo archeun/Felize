@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "chart.js": "^2.7.2",
+    "jsondiffpatch": "^0.3.11",
     "semantic-ui": "^2.3.2"
   },
   "devDependencies": {},

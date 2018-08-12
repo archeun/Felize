@@ -1,7 +1,297 @@
 {% extends "../layout/felize_app.html" %}
+{% load static %}
 
 {% block content %}
-    <h3>Felize - Dashboard</h3>
-    <a href="/pm/organizations">Organizations</a>
-    <a href="/pm/projects">Projects</a>
+    <link rel="stylesheet" type="text/css" href="{% static 'projectmanager/felize/dashboard/css/dashboard.css' %}"/>
+    <script type="application/javascript" src="{% static 'projectmanager/felize/dashboard/js/dashboard.js' %}"></script>
+
+    <div class="ui five column grid">
+        <div class="column">
+            <div class="ui segment">
+                <div class="ui statistics">
+                    <div class="statistic">
+                        <div class="value">
+                            <i class="play icon"></i>
+                            <span class="ui active inline loader" id="active_projects_count"></span>
+                        </div>
+                        <div class="label">
+                            Active Projects
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="ui statistics">
+                    <div class="statistic">
+                        <div class="value">
+                            <i class="stop circle outline icon"></i>
+                            <span class="ui active inline loader" id="closed_projects_count"></span>
+                        </div>
+                        <div class="label">
+                            Closed Projects
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="ui statistics">
+                    <div class="statistic">
+                        <div class="value">
+                            <i class="check circle outline icon"></i>
+                            <span class="ui active inline loader" id="unallocated_employee_count"></span>
+                        </div>
+                        <div class="label">
+                            Unallocated Res.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="ui statistics">
+                    <div class="statistic">
+                        <div class="value">
+                            <i class="stopwatch icon"></i>
+                            <span class="ui active inline loader" id="pending_tasks_count"></span>
+                        </div>
+                        <div class="label">
+                            Pending Tasks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="ui statistics">
+                    <div class="statistic">
+                        <div class="value">
+                            <i class="space shuttle icon"></i>
+                            <span class="ui active inline loader" id="pending_milestones_count"></span>
+                        </div>
+                        <div class="label">
+                            Pending Milestones
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui grid">
+        <div class="ten wide column">
+            <div class="ui grid">
+                <div class="eight wide column">
+                    <div class="ui segment felize-dashboard-ui-segment-260">
+                        <strong>Project Completion - Above 90%</strong>
+                        <table class="ui small table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>John</td>
+                                <td>Approved</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <td>Jamie</td>
+                                <td>Approved</td>
+                                <td>Requires call</td>
+                            </tr>
+                            <tr>
+                                <td>Jill</td>
+                                <td>Denied</td>
+                                <td>None</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>3 People</th>
+                                <th>2 Approved</th>
+                                <th></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="eight wide column">
+                    <div class="ui segment felize-dashboard-ui-segment-260">
+                        <canvas id="canvas" height="210%"></canvas>
+                    </div>
+                </div>
+                <div class="sixteen wide column">
+                    <div class="ui segment felize-dashboard-ui-segment-450">
+                        <p><strong>Allocation by Resource Type</strong></p>
+                        <canvas id="canvas1" height="180%"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="six wide column">
+            <div class="ui segment felize-dashboard-ui-segment-740">
+                <div class="ui feed">
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="event">
+                        <div class="label">
+                            <i class="comments icon"></i>
+                        </div>
+                        <div class="content">
+                            <div class="date">
+                                3 days ago
+                            </div>
+                            <div class="summary">
+                                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui two column grid">
+        <div class="column">
+            <div class="ui segment felize-dashboard-ui-segment-260">
+                <table class="ui small table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>John</td>
+                        <td>Approved</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Jamie</td>
+                        <td>Approved</td>
+                        <td>Requires call</td>
+                    </tr>
+                    <tr>
+                        <td>Jill</td>
+                        <td>Denied</td>
+                        <td>None</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>3 People</th>
+                        <th>2 Approved</th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment felize-dashboard-ui-segment-260">
+            </div>
+        </div>
+    </div>
+
+    <script type="application/javascript">
+        let pendingItemDataApiUrl = '{% url 'projectmanager:api_dashboard_pending_item_data' %}';
+    </script>
 {% endblock %}

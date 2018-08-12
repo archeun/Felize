@@ -72,3 +72,44 @@ def get_project_resource_list_config(params):
             }
         ]
     }
+
+
+def get_audit_list_config(params):
+    return {
+        'params': params,
+        'cols': [
+            {
+                'name': 'Object',
+                'value_getter_type': VALUE_GETTER_TYPE_ATTR_SINGLE,
+                'value_getter': 'revision',
+                'config': {
+                    'url': {
+                        'view_name': 'projectmanager:audit_detail',
+                        'params': [
+                            {'name': 'pk', 'getter': 'id'}
+                        ]
+                    }
+                }
+            },
+            {
+                'name': 'Type',
+                'value_getter_type': VALUE_GETTER_TYPE_ATTR_SINGLE,
+                'value_getter': 'content_type',
+            },
+            {
+                'name': 'Data',
+                'value_getter_type': VALUE_GETTER_TYPE_ATTR_SINGLE,
+                'value_getter': 'serialized_data',
+            },
+            {
+                'name': 'User',
+                'value_getter_type': VALUE_GETTER_TYPE_ATTR_CHAIN,
+                'value_getter': ['revision', 'user'],
+            },
+            {
+                'name': 'Date/Time',
+                'value_getter_type': VALUE_GETTER_TYPE_ATTR_CHAIN,
+                'value_getter': ['revision', 'date_created'],
+            }
+        ]
+    }

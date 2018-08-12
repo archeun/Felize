@@ -13,6 +13,7 @@ from projectmanager.authorization.authorization_service import FelizePermissionR
 from projectmanager.services.list_service import get_project_list_config
 import projectmanager.services.project_service as project_service
 from django.contrib import messages
+from reversion.views import RevisionMixin
 
 
 class ProjectListView(generic.ListView):
@@ -66,7 +67,7 @@ class ProjectListView(generic.ListView):
         return project_filter.qs
 
 
-class ProjectUpdateView(SuccessMessageMixin, generic.UpdateView):
+class ProjectUpdateView(SuccessMessageMixin, RevisionMixin, generic.UpdateView):
     form_class = ProjectForm
     model = Project
     template_name = 'projectmanager/project/detail.html'

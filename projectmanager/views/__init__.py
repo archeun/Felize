@@ -3,6 +3,7 @@ from .base_views import dashboard
 from .project_views import ProjectUpdateView, ProjectListView, ProjectCreateView
 from .project_resource_views import ProjectResourceListView, ProjectResourceCreateView, ProjectResourceUpdateView
 from .work_entries_views import WorkEntryCreateView, WorkEntryUpdateView, WorkEntryListView
-from .api_views import ProjectResourcesChartJsView
+from .api_views import DashboardPendingItemsPanelDataView, ProjectResourcesChartJsView
 from .report_views import project_resources_chart
 from .sprint_milestones_views import SprintMilestonesUpdateView
+from .audit_views import AuditListView, AuditDetailView

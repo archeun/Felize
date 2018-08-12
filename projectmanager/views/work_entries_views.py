@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, ListView
+from reversion.views import RevisionMixin
+
 from projectmanager.forms.TaskForm import get_work_entry_form, TaskForm
 from projectmanager.forms.WorkEntryTaskSwitchForm import WorkEntryTaskSwitchForm
 from projectmanager.model_filters.ProjectResourceFilter import ProjectResourceFilter
@@ -12,7 +14,7 @@ from projectmanager.services import project_service
 from projectmanager.services.list_service import get_project_resource_list_config
 
 
-class WorkEntryCreateView(CreateView):
+class WorkEntryCreateView(RevisionMixin, CreateView):
     model = WorkEntry
     form_class = TaskForm
     template_name = 'projectmanager/work_entries/detail.html'
@@ -45,7 +47,7 @@ class WorkEntryCreateView(CreateView):
         return super(WorkEntryCreateView, self).form_valid(form)
 
 
-class WorkEntryUpdateView(UpdateView):
+class WorkEntryUpdateView(RevisionMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = 'projectmanager/work_entries/detail.html'

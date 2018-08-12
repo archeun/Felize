@@ -1,3 +1,4 @@
+import reversion
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -42,6 +43,7 @@ class Client(models.Model):
         return self.name
 
 
+@reversion.register()
 class Project(models.Model):
     code = models.CharField(max_length=10, blank=False, unique=True)
     name = models.CharField(max_length=255, blank=False)
@@ -93,6 +95,7 @@ class ProjectResourceType(models.Model):
         return self.name
 
 
+@reversion.register()
 class ProjectSprint(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False)
@@ -111,7 +114,7 @@ class ProjectSprint(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.project.name + " : " + self.name
 
     def get_absolute_url(self):
         return reverse('projectmanager:update_sprint_milestones', kwargs={'pk': self.id})
@@ -133,6 +136,7 @@ class MilestoneOwnerType(models.Model):
     name = models.CharField(max_length=255, blank=False)
 
 
+@reversion.register()
 class SprintMilestone(models.Model):
     sprint = models.ForeignKey(ProjectSprint, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False)
@@ -156,12 +160,16 @@ class SprintMilestone(models.Model):
         default=PENDING,
     )
 
+    def __str__(self):
+        return self.sprint.__str__() + " : " + self.name
+
 
 class MilestoneAttachment(models.Model):
     milestone = models.ForeignKey(SprintMilestone, on_delete=models.CASCADE)
     attachment = models.ForeignKey(Attachment, on_delete=models.CASCADE)
 
 
+@reversion.register()
 class ProjectResource(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -188,6 +196,7 @@ class ProjectManager(models.Model):
         return self.employee.first_name + " : {" + self.project.__str__() + "}"
 
 
+@reversion.register()
 class UserStory(models.Model):
     title = models.CharField(max_length=1000, blank=False)
     description = models.TextField()
@@ -207,6 +216,7 @@ class TaskStatus(models.Model):
         return self.name
 
 
+@reversion.register()
 class Task(models.Model):
     title = models.CharField(max_length=1000, blank=False)
     description = models.TextField()
@@ -222,6 +232,7 @@ class Task(models.Model):
         return reverse('projectmanager:update_work_entries', kwargs={'pk': self.id})
 
 
+@reversion.register()
 class WorkEntry(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     worked_date = models.DateField()

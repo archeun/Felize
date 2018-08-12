@@ -3,6 +3,8 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, ListView
+from reversion.views import RevisionMixin
+
 from projectmanager.forms.ProjectResourceForm import get_project_resource_tasks_form, ProjectResourceForm
 from projectmanager.model_filters.ProjectResourceFilter import ProjectResourceFilter
 from projectmanager.models import ProjectResource, ProjectManager
@@ -10,7 +12,7 @@ from projectmanager.services import project_service
 from projectmanager.services.list_service import get_project_resource_list_config
 
 
-class ProjectResourceCreateView(CreateView):
+class ProjectResourceCreateView(RevisionMixin, CreateView):
     model = ProjectResource
     form_class = ProjectResourceForm
     template_name = 'projectmanager/project_resource/detail.html'
@@ -43,7 +45,7 @@ class ProjectResourceCreateView(CreateView):
         return super(ProjectResourceCreateView, self).form_valid(form)
 
 
-class ProjectResourceUpdateView(UpdateView):
+class ProjectResourceUpdateView(RevisionMixin, UpdateView):
     model = ProjectResource
     form_class = ProjectResourceForm
     template_name = 'projectmanager/project_resource/detail.html'

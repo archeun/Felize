@@ -1,0 +1,45 @@
+{% extends "../layout/felize_app.html" %}
+
+{% block content %}
+    <style type="text/css">
+        .felize-auto-overflow {
+            overflow: auto;
+        }
+    </style>
+    <div class="ui two column cards">
+        <div class="ui raised card">
+            <div class="content felize-auto-overflow">
+                <div class="ui horizontal divider">Audit Details</div>
+                <br>
+                <div class="header">{{ object_name }}</div>
+                <br>
+                <div class="meta">Type: {{ entity_type }}</div>
+                <div class="meta">Changed at {{ changed_date }} by {{ changed_user }}</div>
+                <div class="ui horizontal divider">Current Values</div>
+                <br>
+                <div class="center">
+                    <pre id="serialized_data"></pre>
+                </div>
+            </div>
+
+        </div>
+        <div class="ui raised card">
+            <div class="content felize-auto-overflow">
+                <div class="center">
+                    <div class="ui horizontal divider">Changes</div>
+                    <div id="visual"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let pre_json = {{ pre_data|safe }};
+        let post_json = {{ post_data|safe }};
+        let serialized_data = {{ serialized_data|safe }};
+        let delta = jsondiffpatch.diff(pre_json, post_json);
+        document.getElementById("serialized_data").innerHTML = JSON.stringify(serialized_data, null, 4);
+        document.getElementById('visual').innerHTML = jsondiffpatch.formatters.html.format(delta, pre_json);
+    </script>
+{% endblock %}

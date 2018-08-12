@@ -1,0 +1,40 @@
+{% extends "../layout/felize_app.html" %}
+{% load list_component %}
+
+{% block content %}
+    <div class="ui mini teal">
+        <div class="ui accordion">
+            <div class="title active">
+                <i class="filter icon right aligned"></i> Filter Audit Records
+            </div>
+            <div class="content">
+                <div class="transition">
+                    <div class="ui segment">
+                        <div class="ui form">
+                            <form method="get">
+                                <div class="ui form">
+                                    <div class="fields">
+                                        <div class="four wide field">
+                                            {{ audit_filter.form.content_type.errors }}
+                                            <label for="{{ audit_filter.form.content_type.id_for_label }}">Type</label>
+                                            {{ audit_filter.form.content_type }}
+                                        </div>
+                                        <div class="six wide field">
+                                            <label for="user_choice">User</label>
+                                            {{ audit_action_performed_user_html }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <button class="ui button primary" type="submit">Search</button>
+                                <input class="ui button" type="button" value="Reset"
+                                       onclick="window.location='{{ audit_filter_reset_url }}'">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% render_list audits audit_list_config %}
+{% endblock %}
