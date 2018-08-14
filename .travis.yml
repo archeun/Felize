@@ -22,4 +22,5 @@ before_script:
   - psql -c "CREATE DATABASE felize;" -U postgres
 
 script:
-  - python manage.py syncdb --noinput
+  - python manage.py makemigrations
+  - python manage.py migrate
