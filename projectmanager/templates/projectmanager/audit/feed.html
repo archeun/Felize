@@ -1,4 +1,49 @@
 {% extends "../layout/felize_app.html" %}
 
 {% block content %}
+    <br>
+    <div class="ui grid text container">
+        <h2 class="ui header">
+            <i class="settings icon"></i>
+            <div class="content">
+                Activity Feed
+                <div class="sub header">Changes made to various entities appear here</div>
+            </div>
+        </h2>
+    </div>
+    <br>
+    <br>
+    <br>
+    {% for event in audit_feed %}
+        {% if event.object %}
+            <div class="ui grid text container">
+                <div class="sixteen wide column raised ui segment">
+                    <div class="content">
+                        <h3>
+                            <i class="{{ event.entry_icon }} icon"></i> {{ event.object }}
+                        </h3>
+                        <div class="description">
+                            {% if event.change_type == 'Changed' %}
+                                {{ event.object_type_name }} <strong>{{ event.changed_attrs }}</strong>
+                                <i>({{ event.changed_attr_values }})</i> was changed {% if event.user %}by
+                                {{ event.user }}{% endif %}
+
+                            {% else %}
+                                {{ event.object_type_name }} was created {% if event.user %}by
+                                {{ event.user }}{% endif %}
+                            {% endif %} on {{ event.changed_date }}
+                        </div>
+                    </div>
+                    {% if event.object_url %}
+                        <div class="extra content">
+                            <a href="{{ event.object_url }}" target="_blank">View {{ event.object_type_name }}</a>
+                            <small> [current version]</small>
+                            <a style="float: right" class="ui teal small tag label">{{ event.object_type_name }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <br><br>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
