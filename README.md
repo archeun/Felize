@@ -1,5 +1,6 @@
 # Felize - An open source Web Based Project Management Application
-https://travis-ci.org/ArCheun/Felize.svg?branch=master
+
+![alt text](https://travis-ci.org/ArCheun/Felize.svg?branch=master)
 
 **Charts**
 
