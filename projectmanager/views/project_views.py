@@ -4,7 +4,7 @@ from django.db import transaction
 from django.urls import reverse
 from django.views.generic.edit import ModelFormMixin
 
-from projectmanager.forms.ProjectForm import ProjectForm, get_project_sprint_form
+from projectmanager.forms.ProjectForm import ProjectForm, get_project_inline_forms
 from projectmanager.model_filters import ProjectFilter
 from projectmanager.models import Project, ProjectManager
 from django.views import generic
@@ -87,10 +87,14 @@ class ProjectUpdateView(SuccessMessageMixin, RevisionMixin, generic.UpdateView):
         messages.success(self.request, 'Successfully Updated')
         context = self.get_context_data()
         project_sprints = context['project_sprints']
+        user_stories = context['user_stories']
         with transaction.atomic():
             if project_sprints.is_valid():
                 project_sprints.instance = self.object
                 project_sprints.save()
+            if user_stories.is_valid():
+                user_stories.instance = self.object
+                user_stories.save()
         return super(ModelFormMixin, self).form_valid(form)
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -109,13 +113,14 @@ class ProjectUpdateView(SuccessMessageMixin, RevisionMixin, generic.UpdateView):
                 'projectmanager:update_project_resource', kwargs={'pk': is_project_resource.id}
             )
         if self.request.POST:
-            forms = get_project_sprint_form(self.get_form(), is_project_manager,
-                                            data=self.request.POST,
-                                            instance=self.object)
+            forms = get_project_inline_forms(self.get_form(), is_project_manager,
+                                             data=self.request.POST,
+                                             instance=self.object)
         else:
-            forms = get_project_sprint_form(self.get_form(), is_project_manager, instance=self.object)
+            forms = get_project_inline_forms(self.get_form(), is_project_manager, instance=self.object)
 
         context['project_sprints'] = forms['sprint_form_set']
+        context['user_stories'] = forms['user_story_form_set']
         context['form'] = forms['project_form']
         return context
 

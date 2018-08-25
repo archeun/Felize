@@ -108,7 +108,7 @@
                             </tr>
                             </thead>
                         {% endif %}
-                        <tr class="{% cycle 'row1' 'row2' %} formset_row">
+                        <tr class="{% cycle 'row1' 'row2' %} sprint_formset_row">
                             {% for field in form.visible_fields %}
                                 <td>
                                     {% if forloop.first %}
@@ -143,6 +143,43 @@
                         </tr>
                     {% endfor %}
                 </table>
+
+                <h4 class="ui horizontal divider header teal">
+                    <i class="users icon"></i>User Stories
+                </h4>
+                <table class="ui teal small compact striped table">
+                    {{ user_stories.management_form }}
+
+                    {% for form in user_stories.forms %}
+                        {% if forloop.first %}
+                            <thead>
+                            <tr>
+                                {% for field in form.visible_fields %}
+                                    <th
+                                            {% if forloop.counter == 1 %}
+                                                width="60%"
+                                            {% endif %} >
+                                        {{ field.label|capfirst }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        {% endif %}
+                        <tr class="{% cycle 'row1' 'row2' %} user_story_formset_row">
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {{ field.errors.as_ul }}
+                                    {{ field }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
                 {% if can_edit %}
                     <div class="ui container right aligned">
                         <div class="ui buttons">
@@ -159,10 +196,31 @@
         </div>
     </div>
     <script type="application/javascript">
-        $('.formset_row').formset({
+        $('.sprint_formset_row').formset({
             addText: '<i class="plus square icon"></i>Add Sprint',
             deleteText: '<i class="trash alternate icon" title="Delete Sprint"></i>',
-            prefix: 'task_set',
+            prefix: 'sprint_set',
+            added: function (row) {
+                $(row).find("textarea").height(20);
+                $(row).find('.datepicker').calendar({
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            let day = date.getDate() + '', month = (date.getMonth() + 1) + '',
+                                year = date.getFullYear();
+                            if (day.length < 2) day = '0' + day;
+                            if (month.length < 2) month = '0' + month;
+                            return year + '-' + month + '-' + day;
+                        }
+                    }
+                });
+            }
+        });
+        $('.user_story_formset_row').formset({
+            addText: '<i class="plus square icon"></i>Add User Story',
+            deleteText: '<i class="trash alternate icon" title="Delete User Story"></i>',
+            prefix: 'user_story_set',
             added: function (row) {
                 $(row).find("textarea").height(20);
             }

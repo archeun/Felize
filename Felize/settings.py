@@ -79,13 +79,13 @@ WSGI_APPLICATION = 'Felize.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'felize', #LOCAL
-        'NAME': 'postgres',  # DOCKER
-        # 'USER': 'archeun', #LOCAL
-        'USER': 'postgres',  # DOCKER
-        # 'PASSWORD': '1234', #LOCAL
-        # 'HOST': '127.0.0.1', #LOCAL
-        'HOST': 'db',  # DOCKER
+        'NAME': 'felize', #LOCAL
+        # 'NAME': 'postgres',  # DOCKER
+        'USER': 'archeun', #LOCAL
+        # 'USER': 'postgres',  # DOCKER
+        'PASSWORD': '1234', #LOCAL
+        'HOST': '127.0.0.1', #LOCAL
+        # 'HOST': 'db',  # DOCKER
         'PORT': '5432',
     }
 }

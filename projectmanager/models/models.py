@@ -299,7 +299,7 @@ class UserStory(BaseFelizeModel):
     MODEL_DIFF_FEED_ENTRY_ICON = 'address card outline'
 
     title = models.CharField(max_length=1000, blank=False, verbose_name='Title')
-    description = models.TextField(verbose_name='Description')
+    description = models.TextField(verbose_name='Description', blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name='Project')
 
     class Meta:

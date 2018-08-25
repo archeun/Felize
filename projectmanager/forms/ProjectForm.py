@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from projectmanager.models import Project, ProjectSprint
+from projectmanager.models import Project, ProjectSprint, UserStory
 
 
 class ProjectForm(forms.ModelForm):
@@ -18,8 +18,9 @@ class ProjectForm(forms.ModelForm):
                 return self.cleaned_data[name]
 
 
-def get_project_sprint_form(project_form, is_project_manager, **kwargs):
+def get_project_inline_forms(project_form, is_project_manager, **kwargs):
     sprint_forms = inlineformset_factory(Project, ProjectSprint, fields='__all__', extra=1, )(**kwargs)
+    user_story_forms = inlineformset_factory(Project, UserStory, fields='__all__', extra=1, )(**kwargs)
 
     if not is_project_manager:
         for field in project_form.fields:
@@ -30,4 +31,4 @@ def get_project_sprint_form(project_form, is_project_manager, **kwargs):
                 form.fields[field].widget.attrs['disabled'] = True
                 form.fields[field].required = False
 
-    return {'project_form': project_form, 'sprint_form_set': sprint_forms}
+    return {'project_form': project_form, 'sprint_form_set': sprint_forms, 'user_story_form_set': user_story_forms}
