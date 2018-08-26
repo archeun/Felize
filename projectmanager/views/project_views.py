@@ -1,3 +1,6 @@
+import time
+from datetime import timedelta, datetime, date
+
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
@@ -6,7 +9,7 @@ from django.views.generic.edit import ModelFormMixin
 
 from projectmanager.forms.ProjectForm import ProjectForm, get_project_inline_forms
 from projectmanager.model_filters import ProjectFilter
-from projectmanager.models import Project, ProjectManager
+from projectmanager.models import Project, ProjectManager, WorkEntry, Task
 from django.views import generic
 from projectmanager.authorization.authorization_service import FelizePermissionRequiredMixin, is_user_project_manager, \
     is_entity_accessible
@@ -142,3 +145,51 @@ class ProjectCreateView(FelizePermissionRequiredMixin, SuccessMessageMixin, Revi
                              project_resources=form.cleaned_data['resources'])
         messages.success(self.request, 'Successfully Saved')
         return super(ModelFormMixin, self).form_valid(form)
+
+
+class ProjectWorksheetView(generic.ListView):
+    template_name = 'projectmanager/project/worksheet.html'
+    queryset = []
+    filters = {
+        'start_date': date(2018, 7, 17),
+        'end_date': date(2018, 8, 31),
+        'employee_ids': ['10', '12'],
+        'user_story_ids': ['4', '5', '6'],
+        'status_ids': ['1', '2', '3', '4', '5', '6'],
+        'resource_type_ids': ['1', '2', '3', '4', '5'],
+        'due_date': date(2018, 8, 25),
+    }
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProjectWorksheetView, self).get_context_data(**kwargs)
+        project = Project.objects.filter(id=self.kwargs['pk']).first()
+        start_date = self.filters['start_date']
+        if project.start_date > self.filters['start_date']:
+            start_date = project.start_date
+        end_date = self.filters['end_date']
+        if project.end_date < self.filters['end_date']:
+            end_date = project.end_date
+        project_duration = end_date - start_date
+        context['project_name'] = project.name
+        context['project_days'] = []
+        context['today'] = date.today()
+        for i in range(project_duration.days + 1):
+            context['project_days'].append((start_date + timedelta(i)).strftime('%Y-%m-%d'))
+
+        context['task_work_entries'] = project_service.get_prepared_work_entries_for_date_range(
+            context['task_list'], context['project_days'])
+        return context
+
+    def get_queryset(self):
+        wo_filters = Task.objects.filter()
+        # w_filters = Task.objects.filter(
+        #     user_story__project_id=self.kwargs['pk'],
+        #     workentry__worked_date__gte=self.filters['start_date'],
+        #     workentry__worked_date__lte=self.filters['end_date'],
+        #     owner__employee_id__in=self.filters['employee_ids'],
+        #     user_story_id__in=self.filters['user_story_ids'],
+        #     status_id__in=self.filters['status_ids'],
+        #     owner__resource_type_id__in=self.filters['resource_type_ids'],
+        #     due_date=self.filters['due_date']
+        # ).distinct()
+        return wo_filters

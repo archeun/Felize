@@ -16,6 +16,9 @@
           type="text/css">
     <link rel="stylesheet" type="text/css"
           href="{% static 'projectmanager/node_modules/jsondiffpatch/dist/formatters-styles/html.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'projectmanager/node_modules/chosen-js/chosen.css' %}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'projectmanager/node_modules/datatables.net-se/css/dataTables.semanticui.min.css' %}"/>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -27,6 +30,9 @@
     <script src="{% static 'projectmanager/formset/js/jquery.formset.js' %}"></script>
     <script src="{% static 'projectmanager/node_modules/chart.js/dist/Chart.js' %}"></script>
     <script src="{% static 'projectmanager/node_modules/jsondiffpatch/dist/jsondiffpatch.umd.js' %}"></script>
+    <script src="{% static 'projectmanager/node_modules/datatables.net/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'projectmanager/node_modules/datatables.net-se/js/dataTables.semanticui.min.js' %}"></script>
+    <script src="{% static 'projectmanager/node_modules/chosen-js/chosen.jquery.js' %}"></script>
 </head>
 <body>
 
@@ -76,7 +82,6 @@
 <script type="application/javascript">
     $('.ui.dropdown').dropdown();
     $('.ui.accordion').accordion();
-    $("select[multiple]").multiSelect();
     $('.message').transition('fade', 5000);
     $('.message .close').on('click', function () {
         $(this).closest('.message').transition('hide');

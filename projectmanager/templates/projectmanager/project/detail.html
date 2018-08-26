@@ -32,7 +32,8 @@
                         {% endif %}
                         <div class="ui divider"></div>
                         <div class="header">Reports</div>
-                        <div class="item"><a href="{% url 'projectmanager:project_list' %}">Resource Work Hours</a>
+                        <div class="item"><a
+                                href="{% url 'projectmanager:project_worksheet' project.id %}">Worksheet</a>
                         </div>
                     </div>
                 </div>
@@ -65,6 +66,33 @@
                             {{ form.status.errors }}
                             <label for="{{ form.status.id_for_label }}">Status</label>
                             {{ form.status }}
+                        </div>
+                    </div>
+                    <div class="fields ui twelve column grid">
+                        <div class="four wide field">
+                            {{ form.start_date.errors }}
+                            <label for="{{ form.start_date.id_for_label }}">Start Date</label>
+                            <div class="ui calendar datepicker">
+                                <div class="ui input left icon">
+                                    <i class="calendar icon"></i>
+                                    {{ form.start_date }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="four wide field">
+                            {{ form.end_date.errors }}
+                            <label for="{{ form.end_date.id_for_label }}">End Date</label>
+                            <div class="ui calendar datepicker">
+                                <div class="ui input left icon">
+                                    <i class="calendar icon"></i>
+                                    {{ form.end_date }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="two wide field">
+                            {{ form.approved_work_days.errors }}
+                            <label for="{{ form.approved_work_days.id_for_label }}">Approved Work Days</label>
+                            {{ form.approved_work_days }}
                         </div>
                     </div>
                     <h4 class="ui horizontal divider header teal">
@@ -237,5 +265,6 @@
             $(this).height(20);
         });
         $('td:nth-child(5),th:nth-child(5)').hide();
+        $("select[multiple]").multiSelect();
     </script>
 {% endblock %}

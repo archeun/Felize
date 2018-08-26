@@ -1,4 +1,5 @@
 {% extends "../layout/felize_app.html" %}
+{% load inputtype %}
 {% block content %}
     <div class="ui two column grid raised segment teal">
         <div class="sixteen wide column inverted">
@@ -83,13 +84,22 @@
                                         {% endfor %}
                                     {% endif %}
                                     {{ field.errors.as_ul }}
-                                    {{ field }}
+                                    {% if field.field|inputtype == 'DateField' %}
+                                        <div class="ui calendar datepicker">
+                                            <div class="ui input left icon">
+                                                <i class="calendar icon"></i>
+                                                {{ field }}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
                                 </td>
                             {% endfor %}
                             {% for hidden in form.hidden_fields %}
                                 {% if hidden.name == 'id' and hidden.value %}
                                     <td>
-                                        <a target="_blank"  title="View Work Break Down"
+                                        <a target="_blank" title="View Work Break Down"
                                            href="{% url 'projectmanager:update_work_entries' hidden.value %}">
                                             <i class="tasks icon"></i>
                                         </a>
@@ -114,6 +124,19 @@
             prefix: 'task_set',
             added: function (row) {
                 $(row).find("textarea").height(20);
+                $(row).find('.datepicker').calendar({
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            let day = date.getDate() + '', month = (date.getMonth() + 1) + '',
+                                year = date.getFullYear();
+                            if (day.length < 2) day = '0' + day;
+                            if (month.length < 2) month = '0' + month;
+                            return year + '-' + month + '-' + day;
+                        }
+                    }
+                });
             }
         });
 
@@ -127,7 +150,7 @@
         body.on('blur', 'textarea', function () {
             $(this).height(20);
         });
-        $('td:nth-child(6),th:nth-child(6)').hide();
+        $('td:nth-child(7),th:nth-child(7)').hide();
 
     </script>
 {% endblock %}

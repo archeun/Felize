@@ -97,3 +97,31 @@ def get_project_resources_for_project(project_id):
     :return:
     """
     return ProjectResource.objects.filter(project_id=project_id)
+
+
+def get_prepared_work_entries_for_date_range(tasks, project_dates):
+    """
+
+    Returns the dict of work entries for each day thoughout the project duration
+    :param tasks:
+    :param project_dates:
+    :return:
+    """
+    task_work_entries = {}
+    for task in tasks:
+        task_work_entries[task.id] = {'total_work_hours': 0}
+        total_work_hours = 0
+        for work_entry in task.workentry_set.all():
+            duration = work_entry.duration
+            total_work_hours += duration
+            for project_day in project_dates:
+                if project_day not in task_work_entries[task.id]:
+                    task_work_entries[task.id][project_day] = ''
+                if project_day == work_entry.worked_date.strftime('%Y-%m-%d'):
+                    if task_work_entries[task.id][project_day] == '':
+                        task_work_entries[task.id][project_day] = work_entry.duration
+                    else:
+                        task_work_entries[task.id][project_day] += work_entry.duration
+        task_work_entries[task.id]['total_work_hours'] = total_work_hours
+        task_work_entries[task.id]['learning_hours'] = total_work_hours - min(task.estimated_time, total_work_hours)
+    return task_work_entries

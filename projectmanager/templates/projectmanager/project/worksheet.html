@@ -1,0 +1,156 @@
+{% extends "../layout/felize_app.html" %}
+{% load message_component %}
+{% load keyvalue %}
+{% block content %}
+    <style type="text/css">
+        td {
+            max-width: 85px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .felize-worksheet-backlog-cell {
+        {#background: #ffe8e6;#}{#color: #db2828;#}
+        }
+
+        .felize-worksheet-in-progress-cell {
+            color: #a333c8;
+            background: #f6e7ff;
+        }
+
+        .felize-worksheet-completed-cell {
+            color: #10a3a3;
+            background: #e1f7f7;
+        }
+
+        .felize-worksheet-accepted-qa-cell {
+            color: #2185d0;
+            background: #dff0ff;
+        }
+
+        .felize-worksheet-accepted-client-cell {
+            color: #1ebc30;
+            background: #e5f9e7;
+        }
+    </style>
+    <div class="ui two column grid segment teal">
+        <div class="fifteen wide column inverted">
+            <h4>
+                <i class="list icon"></i>
+                <span>Worksheet for - {{ project_name }}</span>
+            </h4>
+        </div>
+    </div>
+    <div class="ui container" style="overflow-x: scroll; overflow-y: hidden;padding-bottom: 20px">
+        <table class="ui very compact teal celled table" id="worksheet-table">
+            <thead>
+            <tr>
+                <th class="filter-header" width="12%">Resource</th>
+                <th class="filter-header" width="8%">Resource Type</th>
+                <th class="filter-header" width="25%">User Story</th>
+                <th class="filter-header" width="20%">Task</th>
+                <th class="filter-header">Estimated</th>
+                <th class="filter-header">Actual</th>
+                <th class="filter-header">Learn</th>
+                <th class="filter-header" width="10%">Due Date</th>
+                <th class="filter-header">Status</th>
+                {% for day in project_days %}
+                    <th></th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th width="12%">Resource</th>
+                <th width="8%">Resource Type</th>
+                <th width="25%">User Story</th>
+                <th width="20%">Task</th>
+                <th>Estimated</th>
+                <th>Actual</th>
+                <th>Learn</th>
+                <th width="10%">Due Date</th>
+                <th>Status</th>
+                {% for day in project_days %}
+                    <th>{{ day }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for task in object_list %}
+                <tr {% if task.status.name == "Backlog" %}
+                    class="felize-worksheet-backlog-cell"
+                {% elif task.status.name == "In Progress" %}
+                    class="felize-worksheet-in-progress-cell"
+                {% elif task.status.name == "Completed" %}
+                    class="felize-worksheet-completed-cell"
+                {% elif task.status.name == "Accepted [QA]" %}
+                    class="felize-worksheet-accepted-qa-cell"
+                {% elif task.status.name == "Accepted [Client]" %}
+                    class="felize-worksheet-accepted-client-cell"
+                {% endif %} style="max-width: 100px">
+                    <td title="{{ task.owner.employee.get_full_name }}">{{ task.owner.employee.get_full_name }}</td>
+                    <td>{{ task.owner.resource_type }}</td>
+                    <td title="{{ task.user_story.title }}">{{ task.user_story.title }}</td>
+                    <td title="{{ task.title }}">{{ task.title }}</td>
+                    <td>{{ task.estimated_time }}</td>
+                    <td>{{ task_work_entries|keyvalue:task.id|keyvalue:'total_work_hours' }}</td>
+                    <td>
+                        <span>
+                            <span class="felize-worksheet-cell-data">{{ task_work_entries|keyvalue:task.id|keyvalue:'learning_hours' }}</span>
+                            <span style="float: right;">
+                            <i class="{% if task_work_entries|keyvalue:task.id|keyvalue:'learning_hours' > 0 %}red exclamation circle {% else %} green check circle {% endif %} icon"></i>
+                        </span>
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <span class="felize-worksheet-cell-data">{{ task.due_date }}</span>
+                            {% if task.due_date == today %}
+                                <span title="Due Today" style="float: right;">
+                                <i class="red calendar check icon"></i>
+                            </span>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td title="{{ task.status }}">
+                        {{ task.status }}
+                    </td>
+                    {% for day in project_days %}
+                        <td>
+                            {{ task_work_entries|keyvalue:task.id|keyvalue:day }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script type="application/javascript">
+        var table = $('#worksheet-table').DataTable();
+
+        $(".filter-header").each(function (i) {
+            var selectHolder = $('<div class="ui form"></div>')
+                .appendTo($(this).empty());
+            var select = $('<select class="chosen-select" multiple="true"><option value=""></option></select>')
+                .appendTo(selectHolder)
+                .on('change', function () {
+                    var term = $(this).val();
+                    console.log(term.join('|'));
+                    table.column(i).search(term.join('|'), true, false).draw();
+                });
+            var columnData = [];
+            $.each(table.column(i).data(), function (k, v) {
+                if (i === 6 || i === 7) {
+                    columnData.push($(v).find('.felize-worksheet-cell-data').html());
+                } else {
+                    columnData.push(v);
+                }
+            });
+            var choices = Array.from(new Set(columnData)).sort();
+            for (var j = 0; j < choices.length; j++) {
+                select.append('<option value="' + choices[j] + '">' + choices[j] + '</option>')
+            }
+        });
+        $(".chosen-select").chosen()
+    </script>
+{% endblock %}

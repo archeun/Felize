@@ -329,7 +329,8 @@ class Task(BaseFelizeModel):
     user_story = models.ForeignKey(UserStory, on_delete=models.CASCADE, verbose_name='User Story')
     status = models.ForeignKey(TaskStatus, on_delete=models.CASCADE, verbose_name='Status')
     owner = models.ForeignKey(ProjectResource, on_delete=models.CASCADE, default=None, null=True, verbose_name='Owner')
-    estimated_time = models.IntegerField(verbose_name='Estimated Time')
+    estimated_time = models.DecimalField(verbose_name='Estimated Time', max_digits=6, decimal_places=2)
+    due_date = models.DateField(verbose_name='Due Date')
 
     class Meta:
         verbose_name = "Task"
@@ -355,4 +356,5 @@ class WorkEntry(BaseFelizeModel):
         verbose_name = "Work Entry"
 
     def __str__(self):
-        return self.task.title
+        return self.task.owner.employee.get_full_name() + " Worked on '" + self.task.title + " [" + self.task.user_story.project.name + "]" + "' on " + self.worked_date.strftime(
+            '%Y-%m-%d') + " for " + self.duration.__str__() + " hours"
